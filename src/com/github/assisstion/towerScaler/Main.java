@@ -12,6 +12,10 @@ import org.newdawn.slick.AppGameContainer;
  * 
  * Version History:
  * 
+ * Pre-Alpha 0.1.1.1 (2013-12-20)
+ *   Ready for export
+ *   Added game_over state
+ * 
  * Pre-Alpha 0.1.1.0 (2013-12-20)
  *   Added scroll disabling
  *   Fixed pausing
@@ -35,7 +39,7 @@ import org.newdawn.slick.AppGameContainer;
  * 
  */
 
-@Version(value = "Pre-Alpha 0.1.1.0", lastUpdate = "2013-12-20")
+@Version(value = "Pre-Alpha 0.1.1.1", lastUpdate = "2013-12-20")
 public class Main{
 	
 	private static final int gameFrameWidth = 960;

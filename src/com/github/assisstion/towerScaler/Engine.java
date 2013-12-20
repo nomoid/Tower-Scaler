@@ -50,7 +50,7 @@ public class Engine extends BasicGame{
 
 	@Override
 	public void render(GameContainer gc, Graphics g) throws SlickException{
-		if(state.equals("game")){
+		if(state.equals("game") || state.equals("game_over")){
 			g.setBackground(new Color(150, 150, 255));
 			Input input = gc.getInput();
 			int x = input.getMouseX();
@@ -64,7 +64,14 @@ public class Engine extends BasicGame{
 				}
 			}
 			g.drawString("Score: " + Helper.round(-gameY, 2), 10, 30);
-			g.drawString("(" + aboveBlock + ", " + belowBlock + ", " + leftOfBlock + ", " + rightOfBlock + ")", 10, 50);
+			if(!state.equals("game_over")){
+				g.drawString("(" + aboveBlock + ", " + belowBlock + ", " + leftOfBlock + ", " + rightOfBlock + ")", 10, 50);
+			}
+		}
+		if(state.equals("game_over")){
+			//g.setBackground(new Color(150, 150, 255));
+			g.drawString("Game Over!", 10, 50);
+			//g.drawString("Score: " + Helper.round(-gameY, 2), 10, 30);
 		}
 	}
 
@@ -425,7 +432,7 @@ public class Engine extends BasicGame{
 		}
 		if(player.getY1() - gameY > 640 + player.getHeight()){
 			System.out.println("Game Over! Score: " + Helper.round(-gameY, 2));
-			System.exit(0);
+			state = "game_over";
 		}
 	}
 	
@@ -603,12 +610,12 @@ public class Engine extends BasicGame{
 					minY += smallMinDistance;
 				}
 			}
-			
+			/*
 			System.out.println("omx: " + maxX);
 			System.out.println("omy: " + maxY);
 			System.out.println("nmx: " + minX);
 			System.out.println("nmy: " + minY);
-			
+			*/
 			ge.setY(safeBox.getY1() + (minY * yMultiplier)); 
 			ge.setX(safeBox.getX1() + (minX * xMultiplier));
 			safeBox.setPos(ge);

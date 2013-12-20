@@ -1,6 +1,21 @@
 package com.github.assisstion.towerScaler;
 
+import java.io.File;
+
 public final class Helper{
+	
+	public static String javaroot;
+	
+	static{
+		javaroot = System.getProperty("MF_javaroot");
+		if(javaroot == null){
+			javaroot = "";
+		}
+		else{
+			javaroot += File.separator;
+		}
+	}
+	
 	private Helper(){
 		
 	}
