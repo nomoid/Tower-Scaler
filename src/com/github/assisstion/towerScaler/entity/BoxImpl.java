@@ -1,27 +1,28 @@
 package com.github.assisstion.towerScaler.entity;
 
+import com.github.assisstion.towerScaler.Helper;
+
 public class BoxImpl implements Box{
+	
+	public static int rounding = 6;
+	
 	private double xMin;
 	private double xMax;
 	private double yMin;
 	private double yMax;
 	
 	public BoxImpl(Boxable b){
-		this.xMin = b.getX1();
-		this.xMax = b.getX2();
-		this.yMin = b.getY1();
-		this.yMax = b.getY2();
+		setPos(b.getX1(), b.getX2(), b.getY1(), b.getY2());
 	}
 	
 	public BoxImpl(double x1,double x2,double y1,double y2){
-		xMin = x1;
-		xMax = x2;
-		yMin = y1;
-		yMax = y2;
+		setPos(x1, x2, y1, y2);
 	}
 	
 	@Override
 	public boolean pointIn(double x, double y){
+		x = round(x);
+		y = round(y);
 		if(x >= this.xMin && x <= this.xMax && y >= this.yMin && y <= this.yMax){
 			return true;
 		}
@@ -36,13 +37,29 @@ public class BoxImpl implements Box{
 		}
 		return false;
 	}
+	
+	public void setX1(double x1){
+		this.xMin = round(x1);
+	}
+	
+	public void setX2(double x2){
+		this.xMax = round(x2);
+	}
+	
+	public void setY1(double y1){
+		this.yMin = round(y1);
+	}
+	
+	public void setY2(double y2){
+		this.yMax = round(y2);
+	}
 
 	@Override
 	public void setPos(double x1,double x2,double y1,double y2){
-		xMin = x1;
-		xMax = x2;
-		yMin = y1;
-		yMax = y2;
+		setX1(x1);
+		setX2(x2);
+		setY1(y1);
+		setY2(y2);
 	}
 	
 	@Override
@@ -88,5 +105,14 @@ public class BoxImpl implements Box{
 		char[] x = {(char) this.xMax, (char) this.xMin, (char) this.yMax, (char) this.yMin};
 		String s = String.copyValueOf(x);
 		return s.hashCode();
+	}
+	
+	protected double round(double x){
+		if(rounding == 0){
+			return x;
+		}
+		else{
+			return Helper.round(x, rounding);
+		}
 	}
 }

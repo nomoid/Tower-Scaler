@@ -5,7 +5,7 @@ import org.newdawn.slick.SlickException;
 
 import com.github.assisstion.towerScaler.Helper;
 
-public class Entity implements Comparable<Entity>{
+public class Entity implements Comparable<Entity>, Boxable{
 	
 	private static final int ROUNDING_DIGITS = 6;
 	
@@ -160,5 +160,10 @@ public class Entity implements Comparable<Entity>{
 		}
 		xLocation = Helper.round(xLocation, getRoundingDigits());
 		yLocation = Helper.round(yLocation, getRoundingDigits());
+	}
+	
+	@Override
+	public void setPos(Boxable b){
+		setPos(b.getX1(), b.getX2(), b.getY1(), b.getY2());
 	}
 }

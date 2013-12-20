@@ -33,6 +33,8 @@ public class Engine extends BasicGame{
 	public double nextUpdateY;
 	public Player player;
 	public boolean paused;
+	public boolean scrollingEnabled;
+	public int jumpCounter;
 	protected boolean aboveBlock;
 	protected boolean leftOfBlock;
 	protected boolean belowBlock;
@@ -50,10 +52,19 @@ public class Engine extends BasicGame{
 	public void render(GameContainer gc, Graphics g) throws SlickException{
 		if(state.equals("game")){
 			g.setBackground(new Color(150, 150, 255));
+			Input input = gc.getInput();
+			int x = input.getMouseX();
+			int y = input.getMouseY();
 			for(Entity e : entities){
 				g.drawImage(e.getImage(), (float) (e.getX1() - gameX), (float) (e.getY1() - gameY));
+				if(e instanceof CollisionEntity){
+					if(new BoxImpl((CollisionEntity)e).pointIn(x + gameX, y + gameY)){
+						g.drawString(e.getX1() + ", " + e.getY1() + ", " + e.getX2() + ", " + e.getY2(), 10, 70);
+					}
+				}
 			}
 			g.drawString("Score: " + Helper.round(-gameY, 2), 10, 30);
+			g.drawString("(" + aboveBlock + ", " + belowBlock + ", " + leftOfBlock + ", " + rightOfBlock + ")", 10, 50);
 		}
 	}
 
@@ -93,6 +104,7 @@ public class Engine extends BasicGame{
 		gameX = player.getX1() - 480;
 		gameY = 0;
 		paused = false;
+		scrollingEnabled = true;
 		blockCounter = 0;
 		aboveBlock = false;
 		belowBlock = false;
@@ -105,42 +117,95 @@ public class Engine extends BasicGame{
 	public void update(GameContainer gc, int delta) throws SlickException{
 		if(state.equals("game")){
 			Input input = gc.getInput();
-			pauseCheck(input);
-			upkeepCheck();
+			if(!pauseCheck(input)){
+				return;
+			}
+			upkeepCheck(input);
 			preCollisionCheck();
 			inputCheck(input, delta);
 			gameMovementCheck();
 			postCollisionCheck();
+			cleanupCheck();
 		}
 	}
-	
-	protected void pauseCheck(Input input){
+
+	protected boolean pauseCheck(Input input){
 		if(paused){
 			if(input.isKeyDown(Input.KEY_R)){
 				paused = false;
 			}
 			else{
-				return;
+				return false;
 			}
 		}
 		else{
 			if(input.isKeyDown(Input.KEY_P)){
 				paused = true;
-				return;
+				return false;
 			}
 		}
+		return true;
 	}
 	
-	protected void upkeepCheck(){
+	protected void upkeepCheck(Input input){
 		gameX = player.getX1() - 480;
-		gameY -= -(gameY / 1000) + 1;
+		if(input.isKeyDown(Input.KEY_L)){
+			scrollingEnabled = false;
+		}
+		if(input.isKeyDown(Input.KEY_O)){
+			scrollingEnabled = true;
+		}
+		if(scrollingEnabled){
+			gameY -= -(gameY / 1000) + 1;
+		}
 		if(gameY <= nextUpdateY){
-			PlatformBlock pb0 = new PlatformBlock(nextUpdateX, gameY - 100);
+			Set<PlatformBlock> addToEntities = new HashSet<PlatformBlock>();
+			for(int n = 0; n < 10; n++){
+				PlatformBlock pb0 = new PlatformBlock(nextUpdateX, gameY - 100);
+				/*if(Math.random() * 2 < 1){
+					for(int i = 1; i < 10; i++){
+						PlatformBlock pb1 = new PlatformBlock(nextUpdateX - pb0.getHeight() * i, gameY - 100);
+						boolean overlap = false;
+						for(Entity e : addToEntities){
+							if(new BoxImpl(e).overlaps(pb0)){
+								overlap = true;
+							}
+						}
+						if(!overlap){
+							addToEntities.add(pb0);
+							entities.add(pb0);
+							collisionObjects.add(pb0);
+						}
+						else{
+							break;
+						}
+						if(Math.random() * (i + 2) >= 1){
+							break;
+						}
+					}
+				}*/
+				nextUpdateX = nextUpdateX + ((Math.random() - 0.5) * 200);
+				boolean overlap = false;
+				for(Entity e : addToEntities){
+					if(new BoxImpl(e).overlaps(pb0)){
+						overlap = true;
+					}
+				}
+				if(!overlap){
+					addToEntities.add(pb0);
+					entities.add(pb0);
+					collisionObjects.add(pb0);
+				}
+				else{
+					n--;
+				}
+				if(Math.random() * (n + 1) >= 1){
+					break;
+				}
+			}
 			//nextUpdateX = -nextUpdateX + 250;
 			nextUpdateX = nextUpdateX + ((Math.random() - 0.5) * 200);
 			nextUpdateY -= 100;
-			entities.add(pb0);
-			collisionObjects.add(pb0);
 		}
 		blockCounter++;
 		aboveBlock = false;
@@ -157,7 +222,6 @@ public class Engine extends BasicGame{
 			for(CollisionEntity ce : collisionObjects){
 				if(!ge.overlaps(ce)){
 					//Down collision test
-					boolean b1 = false;
 					BoxImpl boxDown = new BoxImpl(ge.getBox());
 					boxDown.setPos(boxDown.getX1(), boxDown.getX2(), boxDown.getY1(), boxDown.getY2() + 1);
 					if(boxDown.overlaps(ce)){
@@ -170,11 +234,7 @@ public class Engine extends BasicGame{
 						nextTo = ce;
 						blockCounter = 0;
 					}
-					else{
-						b1 = true;
-					}
 					//Up collision test
-					boolean b2 = false;
 					BoxImpl boxUp = new BoxImpl(ge.getBox());
 					boxUp.setPos(boxUp.getX1(), boxUp.getX2(), boxUp.getY1() - 1, boxUp.getY2());
 					if(boxUp.overlaps(ce)){
@@ -185,11 +245,7 @@ public class Engine extends BasicGame{
 						}
 						belowBlock = true;
 					}
-					else{
-						b2 = true;
-					}
 					//Left collision test
-					boolean b3 = false;
 					BoxImpl boxLeft = new BoxImpl(ge.getBox());
 					boxLeft.setPos(boxLeft.getX1() - 1, boxLeft.getX2(), boxLeft.getY1(), boxLeft.getY2());
 					if(boxLeft.overlaps(ce)){
@@ -200,11 +256,7 @@ public class Engine extends BasicGame{
 						}
 						rightOfBlock = true;
 					}
-					else{
-						b3 = true;
-					}
 					//Right collision test
-					boolean b4 = false;
 					BoxImpl boxRight = new BoxImpl(ge.getBox());
 					boxRight.setPos(boxRight.getX1(), boxRight.getX2() + 1, boxRight.getY1(), boxRight.getY2());
 					if(boxRight.overlaps(ce)){
@@ -215,11 +267,8 @@ public class Engine extends BasicGame{
 						}
 						leftOfBlock = true;
 					}
-					else{
-						b4 = true;
-					}
 					BoxImpl boxA;
-					if(b1 && b3){
+					if((!aboveBlock) && (!rightOfBlock)){
 						boxA = new BoxImpl(ge.getBox());
 						boxA.setPos(boxA.getX1() - 1, boxA.getX2(), boxA.getY1(), boxA.getY2() + 1);
 						if(boxA.overlaps(ce)){
@@ -229,7 +278,6 @@ public class Engine extends BasicGame{
 								if(GravitationalEntity.yGravity >= 0){
 									yYes = false;
 								}
-								aboveBlock = true;
 								blockCounter = 0;
 							}
 							else if((-GravitationalEntity.xGravity) < (GravitationalEntity.yGravity)){
@@ -238,16 +286,11 @@ public class Engine extends BasicGame{
 								if(GravitationalEntity.xGravity <= 0){
 									xYes = false;
 								}
-								rightOfBlock = true;
 							}
 							nextTo = ce;
-							b1 = false;
-							b2 = false;
-							b3 = false;
-							b4 = false;
 						}
 					}
-					if(b1 && b4){
+					if((!aboveBlock) && (!leftOfBlock)){
 						boxA = new BoxImpl(ge.getBox());
 						boxA.setPos(boxA.getX1(), boxA.getX2() + 1, boxA.getY1(), boxA.getY2() + 1);
 						if(boxA.overlaps(ce)){
@@ -257,7 +300,6 @@ public class Engine extends BasicGame{
 								if(GravitationalEntity.yGravity >= 0){
 									yYes = false;
 								}
-								aboveBlock = true;
 								blockCounter = 0;
 							}
 							else if((GravitationalEntity.xGravity) < (GravitationalEntity.yGravity)){
@@ -266,16 +308,11 @@ public class Engine extends BasicGame{
 								if(GravitationalEntity.xGravity >= 0){
 									xYes = false;
 								}
-								leftOfBlock = true;
 							}
 							nextTo = ce;
-							b1 = false;
-							b2 = false;
-							b3 = false;
-							b4 = false;
 						}
 					}
-					if(b2 && b4){
+					if((!belowBlock) && (!leftOfBlock)){
 						boxA = new BoxImpl(ge.getBox());
 						boxA.setPos(boxA.getX1(), boxA.getX2() + 1, boxA.getY1() - 1, boxA.getY2());
 						if(boxA.overlaps(ce)){
@@ -285,7 +322,6 @@ public class Engine extends BasicGame{
 								if(GravitationalEntity.yGravity <= 0){
 									yYes = false;
 								}
-								belowBlock = true;
 							}
 							else if((GravitationalEntity.xGravity) < (-GravitationalEntity.yGravity)){
 								ge.incrementY(-1);
@@ -293,16 +329,11 @@ public class Engine extends BasicGame{
 								if(GravitationalEntity.xGravity >= 0){
 									xYes = false;
 								}
-								leftOfBlock = true;
 							}
 							nextTo = ce;
-							b1 = false;
-							b2 = false;
-							b3 = false;
-							b4 = false;
 						}
 					}
-					if(b2 && b3){
+					if((!belowBlock) && (!rightOfBlock)){
 						boxA = new BoxImpl(ge.getBox());
 						boxA.setPos(boxA.getX1() - 1, boxA.getX2(), boxA.getY1()-1, boxA.getY2());
 						if(boxA.overlaps(ce)){
@@ -312,7 +343,6 @@ public class Engine extends BasicGame{
 								if(GravitationalEntity.yGravity <= 0){
 									yYes = false;
 								}
-								belowBlock = true;
 							}
 							else if((-GravitationalEntity.xGravity) < (-GravitationalEntity.yGravity)){
 								ge.incrementY(-1);
@@ -320,13 +350,8 @@ public class Engine extends BasicGame{
 								if(GravitationalEntity.xGravity <= 0){
 									xYes = false;
 								}
-								rightOfBlock = true;
 							}
 							nextTo = ce;
-							b1 = false;
-							b2 = false;
-							b3 = false;
-							b4 = false;
 						}
 					}
 				}
@@ -348,9 +373,20 @@ public class Engine extends BasicGame{
 			System.out.println("Break!");
 			paused = true;
 		}
-		if(input.isKeyDown(Input.KEY_UP)){
-			if(aboveBlock){
-				player.setYVelocity(-1.44);
+		if(aboveBlock){
+			//Double jumping
+			jumpCounter = 2;
+		}
+		if(input.isKeyPressed(Input.KEY_UP)){
+			if(jumpCounter > 0){
+				jumpCounter--;
+				if(aboveBlock){
+					player.setYVelocity(-1.6);
+				}
+				//Midair Jumping
+				else{
+					player.setYVelocity(-1.2);
+				}
 			}
 		}
 		if(input.isKeyDown(Input.KEY_DOWN)){
@@ -384,7 +420,7 @@ public class Engine extends BasicGame{
 	
 	protected void gameMovementCheck(){
 		if(player.getY1() - gameY < 0){
-			player.setY(gameY - 1);
+			player.setY(gameY + 1);
 			player.setYVelocity(0);
 		}
 		if(player.getY1() - gameY > 640 + player.getHeight()){
@@ -567,15 +603,34 @@ public class Engine extends BasicGame{
 					minY += smallMinDistance;
 				}
 			}
-			/*
+			
 			System.out.println("omx: " + maxX);
 			System.out.println("omy: " + maxY);
 			System.out.println("nmx: " + minX);
 			System.out.println("nmy: " + minY);
-			*/
+			
 			ge.setY(safeBox.getY1() + (minY * yMultiplier)); 
 			ge.setX(safeBox.getX1() + (minX * xMultiplier));
 			safeBox.setPos(ge);
+		}
+	}
+	
+	
+	protected void cleanupCheck(){
+		Set<Entity> markedForRemoval = new HashSet<Entity>();
+		for(Entity e : entities){
+			if(e.getY1() - gameY > 640 + e.getHeight()){
+				markedForRemoval.add(e);
+			}
+		}
+		for(Entity e : markedForRemoval){
+			entities.remove(e);
+			if(collisionObjects.contains(e)){
+				collisionObjects.remove(e);
+			}
+			if(collidables.contains(e)){
+				collidables.remove(e);
+			}
 		}
 	}
 }

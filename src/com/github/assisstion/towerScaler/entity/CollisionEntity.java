@@ -34,8 +34,4 @@ public class CollisionEntity extends Entity implements Box{
 		return box;
 	}
 
-	@Override
-	public void setPos(Boxable b){
-		box.setPos(b);
-	}
 }
