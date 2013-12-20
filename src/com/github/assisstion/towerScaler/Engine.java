@@ -391,11 +391,11 @@ public class Engine extends BasicGame{
 					double xMovement;
 					 //Sector LX
 					if(safeBox.getX2() < ce.getX1()){
-						xMovement = ce.getX1() - safeBox.getX2();
+						xMovement = Helper.round(ce.getX1() - safeBox.getX2(), ce.getRoundingDigits());
 					}
 					//Sector RX
 					else if(safeBox.getX1() > ce.getX2()){
-						xMovement = safeBox.getX1() - ce.getX2();
+						xMovement = Helper.round(safeBox.getX1() - ce.getX2(), ce.getRoundingDigits());
 					}
 					//Sector MX
 					else{
@@ -404,11 +404,11 @@ public class Engine extends BasicGame{
 					double yMovement;
 					//Sector XD
 					if(safeBox.getY2() < ce.getY1()){
-						yMovement = ce.getY1() - safeBox.getY2();
+						yMovement = Helper.round(ce.getY1() - safeBox.getY2(), ce.getRoundingDigits());
 					}
 					//Sector XU
 					else if(safeBox.getY1() > ce.getY2()){
-						yMovement = safeBox.getY1() - ce.getY2();
+						yMovement = Helper.round(safeBox.getY1() - ce.getY2(), ce.getRoundingDigits());
 					}
 					//Sector XM
 					else{
@@ -523,10 +523,10 @@ public class Engine extends BasicGame{
 						double smallYMovement = -1;
 						if(ge.overlaps(ce)){
 							if(smallSafeBox.getY2() < ce.getY1()){
-								smallYMovement = ce.getY1() - smallSafeBox.getY2();
+								smallYMovement = Helper.round(ce.getY1() - smallSafeBox.getY2(), ce.getRoundingDigits());
 							}
 							else if(smallSafeBox.getY1() > ce.getY2()){
-								smallYMovement = smallSafeBox.getY1() - ce.getY2();
+								smallYMovement = Helper.round(smallSafeBox.getY1() - ce.getY2(), ce.getRoundingDigits());
 							}
 						}
 						if(smallYMovement > 1){

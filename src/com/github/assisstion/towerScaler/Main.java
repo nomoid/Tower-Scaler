@@ -11,6 +11,9 @@ import org.newdawn.slick.AppGameContainer;
  * 
  * Version History:
  * 
+ * Pre-Alpha 0.1.0.1 (2013-12-20)
+ *   Minor rounding fix
+ * 
  * Pre-Alpha 0.1.0.0 (2013-12-20)
  *   Created git repository
  *   Created project 
@@ -20,7 +23,7 @@ import org.newdawn.slick.AppGameContainer;
  * 
  */
 
-@Version(value = "Pre-Alpha 0.1.0.0", lastUpdate = "2013-12-20")
+@Version(value = "Pre-Alpha 0.1.0.1", lastUpdate = "2013-12-20")
 public class Main{
 	
 	private static final int gameFrameWidth = 960;

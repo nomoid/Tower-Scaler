@@ -78,7 +78,7 @@ public class Entity implements Comparable<Entity>{
 	}
 
 	public double getX2(){
-		return xLocation + image.getWidth();
+		return Helper.round(xLocation + image.getWidth(), 8);
 	}
 
 	public double getY1(){
@@ -86,7 +86,7 @@ public class Entity implements Comparable<Entity>{
 	}
 
 	public double getY2(){
-		return yLocation + image.getHeight();
+		return Helper.round(yLocation + image.getHeight(), 8);
 	}
 	
 	public double getWidth(){
@@ -150,7 +150,7 @@ public class Entity implements Comparable<Entity>{
 		round();
 	}
 	
-	protected int getRoundingDigits(){
+	public int getRoundingDigits(){
 		return ROUNDING_DIGITS;
 	}
 	
