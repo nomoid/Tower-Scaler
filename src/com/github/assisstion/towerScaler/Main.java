@@ -7,9 +7,13 @@ import org.newdawn.slick.AppGameContainer;
  * By Markus Feng (assisstion)
  * 
  * Using the Slick2D Engine
+ * http://slick.ninjacave.com/
  * (See License at EOF)
  * 
  * Version History:
+ * 
+ * Pre-Alpha 0.1.0.2 (2013-12-20)
+ *   Reorganized Engine class
  * 
  * Pre-Alpha 0.1.0.1 (2013-12-20)
  *   Minor rounding fix
@@ -23,7 +27,7 @@ import org.newdawn.slick.AppGameContainer;
  * 
  */
 
-@Version(value = "Pre-Alpha 0.1.0.1", lastUpdate = "2013-12-20")
+@Version(value = "Pre-Alpha 0.1.0.2", lastUpdate = "2013-12-20")
 public class Main{
 	
 	private static final int gameFrameWidth = 960;

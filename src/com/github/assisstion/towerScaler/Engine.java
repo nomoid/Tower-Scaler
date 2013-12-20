@@ -22,6 +22,7 @@ import com.github.assisstion.towerScaler.entity.Player;
 
 public class Engine extends BasicGame{
 	
+	public String state = "main";
 	public Set<Entity> entities;
 	public Set<CollisionEntity> collisionObjects;
 	public Set<GravitationalEntity> collidables;
@@ -47,15 +48,18 @@ public class Engine extends BasicGame{
 
 	@Override
 	public void render(GameContainer gc, Graphics g) throws SlickException{
-		g.setBackground(new Color(150, 150, 255));
-		for(Entity e : entities){
-			g.drawImage(e.getImage(), (float) (e.getX1() - gameX), (float) (e.getY1() - gameY));
+		if(state.equals("game")){
+			g.setBackground(new Color(150, 150, 255));
+			for(Entity e : entities){
+				g.drawImage(e.getImage(), (float) (e.getX1() - gameX), (float) (e.getY1() - gameY));
+			}
+			g.drawString("Score: " + Helper.round(-gameY, 2), 10, 30);
 		}
-		g.drawString("Score: " + Helper.round(-gameY, 2), 10, 30);
 	}
 
 	@Override
 	public void init(GameContainer gc) throws SlickException{
+		state = "game";
 		entities = new HashSet<Entity>();
 		collisionObjects = new HashSet<CollisionEntity>();
 		collidables = new HashSet<GravitationalEntity>();
@@ -88,12 +92,31 @@ public class Engine extends BasicGame{
 		nextUpdateX = 100;
 		gameX = player.getX1() - 480;
 		gameY = 0;
+		paused = false;
+		blockCounter = 0;
+		aboveBlock = false;
+		belowBlock = false;
+		leftOfBlock = false;
+		rightOfBlock = false;
+		nextTo = null;
 	}
 
 	@Override
 	public void update(GameContainer gc, int delta) throws SlickException{
+		if(state.equals("game")){
+			Input input = gc.getInput();
+			pauseCheck(input);
+			upkeepCheck();
+			preCollisionCheck();
+			inputCheck(input, delta);
+			gameMovementCheck();
+			postCollisionCheck();
+		}
+	}
+	
+	protected void pauseCheck(Input input){
 		if(paused){
-			if(gc.getInput().isKeyDown(Input.KEY_R)){
+			if(input.isKeyDown(Input.KEY_R)){
 				paused = false;
 			}
 			else{
@@ -101,11 +124,14 @@ public class Engine extends BasicGame{
 			}
 		}
 		else{
-			if(gc.getInput().isKeyDown(Input.KEY_P)){
+			if(input.isKeyDown(Input.KEY_P)){
 				paused = true;
 				return;
 			}
 		}
+	}
+	
+	protected void upkeepCheck(){
 		gameX = player.getX1() - 480;
 		gameY -= -(gameY / 1000) + 1;
 		if(gameY <= nextUpdateY){
@@ -122,18 +148,6 @@ public class Engine extends BasicGame{
 		leftOfBlock = false;
 		rightOfBlock = false;
 		safeBoxes.clear();
-		Input input = gc.getInput();
-		preCollisionCheck();
-		inputCheck(input, delta);
-		postCollisionCheck();
-		if(player.getY1() - gameY < 0){
-			player.setY(gameY - 1);
-			player.setYVelocity(0);
-		}
-		if(player.getY1() - gameY > 640 + player.getHeight()){
-			System.out.println("Game Over! Score: " + Helper.round(-gameY, 2));
-			System.exit(0);
-		}
 	}
 	
 	protected void preCollisionCheck(){
@@ -366,6 +380,17 @@ public class Engine extends BasicGame{
 		}
 		player.incrementX(0.3 * player.getXVelocity() * delta);
 		player.incrementY(0.3 * player.getYVelocity() * delta);
+	}
+	
+	protected void gameMovementCheck(){
+		if(player.getY1() - gameY < 0){
+			player.setY(gameY - 1);
+			player.setYVelocity(0);
+		}
+		if(player.getY1() - gameY > 640 + player.getHeight()){
+			System.out.println("Game Over! Score: " + Helper.round(-gameY, 2));
+			System.exit(0);
+		}
 	}
 	
 	protected void postCollisionCheck(){
