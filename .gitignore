@@ -1,0 +1,16 @@
+# Mac Files #
+*.DS_Store
+
+# Java Files #
+*.class
+*.jar
+*.war
+*.ear
+
+# Eclipse Files #
+.classpath
+.project
+.settings/*
+
+# Slick Files #
+slick/*
