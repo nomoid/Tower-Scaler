@@ -12,6 +12,10 @@ import org.newdawn.slick.AppGameContainer;
  * 
  * Version History:
  * 
+ * Pre-Alpha 0.1.1.2 (2013-12-23)
+ *   Changed player jump height and gravity
+ *   Added noClip
+ * 
  * Pre-Alpha 0.1.1.1 (2013-12-20)
  *   Ready for export
  *   Added game_over state
@@ -39,7 +43,7 @@ import org.newdawn.slick.AppGameContainer;
  * 
  */
 
-@Version(value = "Pre-Alpha 0.1.1.1", lastUpdate = "2013-12-20")
+@Version(value = "Pre-Alpha 0.1.1.2", lastUpdate = "2013-12-23")
 public class Main{
 	
 	private static final int gameFrameWidth = 960;

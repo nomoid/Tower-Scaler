@@ -12,9 +12,9 @@ public class GravitationalEntity extends CollisionEntity{
 	protected double yVelocity;
 	
 	public static double xGravity = 0;
-	public static double yGravity = 0.04905;
+	public static double yGravity = 0.08;
 	public static double maxXVelocity = 0;
-	public static double maxYVelocity = 4.905;
+	public static double maxYVelocity = 8;
 	
 	
 	public GravitationalEntity(){

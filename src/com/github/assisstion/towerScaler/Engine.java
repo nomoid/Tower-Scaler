@@ -32,6 +32,7 @@ public class Engine extends BasicGame{
 	public double nextUpdateX;
 	public double nextUpdateY;
 	public Player player;
+	public boolean noClip;
 	public boolean paused;
 	public boolean scrollingEnabled;
 	public int jumpCounter;
@@ -52,6 +53,7 @@ public class Engine extends BasicGame{
 	public void render(GameContainer gc, Graphics g) throws SlickException{
 		if(state.equals("game") || state.equals("game_over")){
 			g.setBackground(new Color(150, 150, 255));
+			//g.setBackground(new Color((int)(Math.random() * 255), (int)(Math.random() * 255), (int)(Math.random() * 255)));
 			Input input = gc.getInput();
 			int x = input.getMouseX();
 			int y = input.getMouseY();
@@ -376,6 +378,12 @@ public class Engine extends BasicGame{
 	}
 	
 	protected void inputCheck(Input input, int delta){
+		if(input.isKeyDown(Input.KEY_N)){
+			noClip = true;
+		}
+		if(input.isKeyDown(Input.KEY_M)){
+			noClip = false;
+		}
 		if(input.isKeyDown(Input.KEY_SPACE)){
 			System.out.println("Break!");
 			paused = true;
@@ -384,20 +392,32 @@ public class Engine extends BasicGame{
 			//Double jumping
 			jumpCounter = 2;
 		}
+		if(input.isKeyDown(Input.KEY_UP)){
+			if(noClip){
+				player.incrementY(-0.2 * delta);
+			}
+		}
 		if(input.isKeyPressed(Input.KEY_UP)){
-			if(jumpCounter > 0){
-				jumpCounter--;
-				if(aboveBlock){
-					player.setYVelocity(-1.6);
-				}
-				//Midair Jumping
-				else{
-					player.setYVelocity(-1.2);
+			if(!noClip){
+				if(jumpCounter > 0){
+					jumpCounter--;
+					if(aboveBlock){
+						player.setYVelocity(-2);
+					}
+					//Midair Jumping
+					else{
+						player.setYVelocity(-1.5);
+					}
 				}
 			}
 		}
 		if(input.isKeyDown(Input.KEY_DOWN)){
-			player.incrementYVelocity(0.12);
+			if(noClip){
+				player.incrementY(0.2 * delta);
+			}
+			else{
+				player.incrementYVelocity(0.12);
+			}
 		}
 		if(input.isKeyDown(Input.KEY_LEFT)){
 			if(!rightOfBlock){
@@ -421,8 +441,10 @@ public class Engine extends BasicGame{
 				}
 			}
 		}
-		player.incrementX(0.3 * player.getXVelocity() * delta);
-		player.incrementY(0.3 * player.getYVelocity() * delta);
+		if(!noClip){
+			player.incrementX(0.3 * player.getXVelocity() * delta);
+			player.incrementY(0.3 * player.getYVelocity() * delta);
+		}
 	}
 	
 	protected void gameMovementCheck(){
