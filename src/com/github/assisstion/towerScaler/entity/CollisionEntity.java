@@ -2,6 +2,9 @@ package com.github.assisstion.towerScaler.entity;
 
 import org.newdawn.slick.Image;
 
+import com.github.assisstion.towerScaler.box.Box;
+import com.github.assisstion.towerScaler.box.BoxableBox;
+
 public class CollisionEntity extends Entity implements Box{
 	
 	protected Box box;

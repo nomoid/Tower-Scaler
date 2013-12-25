@@ -1,10 +1,11 @@
-package com.github.assisstion.towerScaler.entity;
+package com.github.assisstion.towerScaler.box;
 
-public class BoxableBox implements Box{
-	
+
+public class ImmutableBoxableBox implements Box{
+
 	private Boxable b;
 	
-	public BoxableBox(Boxable b){
+	public ImmutableBoxableBox(Boxable b){
 		this.b = b;
 	}
 
@@ -30,12 +31,12 @@ public class BoxableBox implements Box{
 
 	@Override
 	public void setPos(double x1, double x2, double y1, double y2){
-		b.setPos(x1, x2, y1, y2);
+		throw new UnsupportedOperationException();
 	}
 	
 	@Override
-	public void setPos(Boxable b){
-		this.b.setPos(b);
+	public void setPos(MutableBoxable b){
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -47,5 +48,4 @@ public class BoxableBox implements Box{
 	public boolean overlaps(Box b){
 		return new BoxImpl(this).overlaps(b);
 	}
-
 }

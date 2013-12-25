@@ -1,4 +1,4 @@
-package com.github.assisstion.towerScaler.entity;
+package com.github.assisstion.towerScaler.box;
 
 import com.github.assisstion.towerScaler.Helper;
 
@@ -6,12 +6,12 @@ public class BoxImpl implements Box{
 	
 	public static int rounding = 6;
 	
-	private double xMin;
-	private double xMax;
-	private double yMin;
-	private double yMax;
+	protected double xMin;
+	protected double xMax;
+	protected double yMin;
+	protected double yMax;
 	
-	public BoxImpl(Boxable b){
+	public BoxImpl(MutableBoxable b){
 		setPos(b.getX1(), b.getX2(), b.getY1(), b.getY2());
 	}
 	
@@ -63,7 +63,7 @@ public class BoxImpl implements Box{
 	}
 	
 	@Override
-	public void setPos(Boxable b){
+	public void setPos(MutableBoxable b){
 		setPos(b.getX1(), b.getX2(), b.getY1(), b.getY2());
 	}
 

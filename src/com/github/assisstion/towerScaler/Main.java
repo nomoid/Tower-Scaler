@@ -12,6 +12,13 @@ import org.newdawn.slick.AppGameContainer;
  * 
  * Version History:
  * 
+ * Pre-Alpha 0.1.2.0 (2013-12-25)
+ *   Added menu
+ *   Sorted files
+ *     Renamed files
+ *     Engine moved to separate files
+ *     Box files moved to separate package
+ * 
  * Pre-Alpha 0.1.1.2 (2013-12-23)
  *   Changed player jump height and gravity
  *   Added noClip
@@ -43,11 +50,16 @@ import org.newdawn.slick.AppGameContainer;
  * 
  */
 
-@Version(value = "Pre-Alpha 0.1.1.2", lastUpdate = "2013-12-23")
-public class Main{
+@Version(value = "Pre-Alpha 0.1.2.0", lastUpdate = "2013-12-25")
+public final class Main{
+	
+	private Main(){
+		//Not to be initialized
+	}
 	
 	private static final int gameFrameWidth = 960;
 	private static final int gameFrameHeight = 640;
+	public static boolean debug = false;
 	
 	public static void main(String[] args){
 		try{
@@ -62,6 +74,14 @@ public class Main{
 		catch(Exception e){
 			e.printStackTrace();
 		}
+	}
+	
+	public static int getGameFrameWidth(){
+		return gameFrameWidth;
+	}
+	
+	public static int getGameFrameHeight(){
+		return gameFrameHeight;
 	}
 	
 	/*

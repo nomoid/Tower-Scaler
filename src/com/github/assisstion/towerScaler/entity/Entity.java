@@ -4,8 +4,9 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
 import com.github.assisstion.towerScaler.Helper;
+import com.github.assisstion.towerScaler.box.MutableBoxable;
 
-public class Entity implements Comparable<Entity>, Boxable{
+public class Entity implements Comparable<Entity>, MutableBoxable{
 	
 	private static final int ROUNDING_DIGITS = 6;
 	
@@ -163,7 +164,7 @@ public class Entity implements Comparable<Entity>, Boxable{
 	}
 	
 	@Override
-	public void setPos(Boxable b){
+	public void setPos(MutableBoxable b){
 		setPos(b.getX1(), b.getX2(), b.getY1(), b.getY2());
 	}
 }
