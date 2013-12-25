@@ -20,6 +20,7 @@ import com.github.assisstion.towerScaler.entity.Player;
 
 public class GameEngine implements AbstractEngine{
 	
+	//Set to false to reset
 	protected boolean initialized;
 	protected Engine engine;
 	protected Set<Entity> entities;
@@ -31,16 +32,19 @@ public class GameEngine implements AbstractEngine{
 	protected double nextUpdateX;
 	protected double nextUpdateY;
 	protected Player player;
+	//Whether gravity affects player or not
 	protected boolean noClip;
 	protected boolean paused;
+	//Whether automatic game scrolling is enabled or not
 	protected boolean scrollingEnabled;
+	//Number of jumps available, resets on touching block top
 	protected int jumpCounter;
 	protected boolean aboveBlock;
 	protected boolean leftOfBlock;
 	protected boolean belowBlock;
 	protected boolean rightOfBlock;
+	//Number of frames since last touching block
 	protected int blockCounter;
-	protected CollisionEntity nextTo;
 	
 	public GameEngine(Engine parent){
 		engine = parent;
@@ -92,7 +96,8 @@ public class GameEngine implements AbstractEngine{
 		belowBlock = false;
 		leftOfBlock = false;
 		rightOfBlock = false;
-		nextTo = null;
+		noClip = false;
+		jumpCounter = 2;
 	}
 	
 	@Override
@@ -107,7 +112,7 @@ public class GameEngine implements AbstractEngine{
 			if(Main.debug){
 				if(e instanceof CollisionEntity){
 					if(new BoxImpl((CollisionEntity)e).pointIn(x + gameX, y + gameY)){
-						g.drawString(e.getX1() + ", " + e.getY1() + ", " + e.getX2() + ", " + e.getY2(), 10, 90);
+						g.drawString(e.getX1() + ", " + e.getY1() + ", " + e.getX2() + ", " + e.getY2(), 10, 110);
 					}
 				}
 			}
@@ -116,8 +121,14 @@ public class GameEngine implements AbstractEngine{
 		g.drawString("Score: " + Helper.round(-gameY, 2), 10, 30);
 		if(Main.debug){
 			if(!getState().equals("game_over")){
-				g.drawString("(" + aboveBlock + ", " + belowBlock + ", " + leftOfBlock + ", " + rightOfBlock + ")", 10, 50);
+				g.drawString("(" + aboveBlock + ", " + belowBlock + ", " + leftOfBlock + ", " + rightOfBlock + ")", 10, 90);
 			}
+		}
+		if(paused){
+			g.drawString("Game paused!", 10, 50);
+		}
+		if(paused || getState().equals("game_over")){
+			g.drawString("(Press space to return to menu, press enter to restart)", 10, 70);
 		}
 	}
 	
@@ -237,7 +248,6 @@ public class GameEngine implements AbstractEngine{
 							yYes = false;
 						}
 						aboveBlock = true;
-						nextTo = ce;
 						blockCounter = 0;
 					}
 					//Up collision test
@@ -293,7 +303,6 @@ public class GameEngine implements AbstractEngine{
 									xYes = false;
 								}
 							}
-							nextTo = ce;
 						}
 					}
 					if((!aboveBlock) && (!leftOfBlock)){
@@ -315,7 +324,6 @@ public class GameEngine implements AbstractEngine{
 									xYes = false;
 								}
 							}
-							nextTo = ce;
 						}
 					}
 					if((!belowBlock) && (!leftOfBlock)){
@@ -336,7 +344,6 @@ public class GameEngine implements AbstractEngine{
 									xYes = false;
 								}
 							}
-							nextTo = ce;
 						}
 					}
 					if((!belowBlock) && (!rightOfBlock)){
@@ -357,7 +364,6 @@ public class GameEngine implements AbstractEngine{
 									xYes = false;
 								}
 							}
-							nextTo = ce;
 						}
 					}
 				}
@@ -400,9 +406,9 @@ public class GameEngine implements AbstractEngine{
 	 * B: break
 	 * N: noClip on
 	 * M: noClip off
-	 * Space: exit to menu (after game over)
-	 * Enter:
-	 * Escape
+	 * Space: exit to menu (after game over or while paused)
+	 * Enter: restart game (after game over or while paused)
+	 * Escape: exit to menu from anywhere, shut down from menu
 	 * Up: move up
 	 * Left: move left
 	 * Down: move down
@@ -724,5 +730,9 @@ public class GameEngine implements AbstractEngine{
 	
 	public boolean isInitialized(){
 		return initialized;
+	}
+	
+	public void reset(){
+		initialized = false;
 	}
 }

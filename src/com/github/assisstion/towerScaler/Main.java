@@ -12,6 +12,10 @@ import org.newdawn.slick.AppGameContainer;
  * 
  * Version History:
  * 
+ * Pre-Alpha 0.1.2.1 (2013-12-25)
+ *   Added option of restarting and exiting to menu in pausing and after game over
+ *   Other minor fixes
+ * 
  * Pre-Alpha 0.1.2.0 (2013-12-25)
  *   Added menu
  *   Sorted files
@@ -50,7 +54,7 @@ import org.newdawn.slick.AppGameContainer;
  * 
  */
 
-@Version(value = "Pre-Alpha 0.1.2.0", lastUpdate = "2013-12-25")
+@Version(value = "Pre-Alpha 0.1.2.1", lastUpdate = "2013-12-25")
 public final class Main{
 	
 	private Main(){
@@ -69,6 +73,9 @@ public final class Main{
 			app.setMinimumLogicUpdateInterval(20);
 			app.setMaximumLogicUpdateInterval(20);
 			app.setTargetFrameRate(50);
+			if(debug){
+				System.out.println("App started!");
+			}
 			app.start();
 		}
 		catch(Exception e){

@@ -40,7 +40,6 @@ public class Engine extends BasicGame implements AbstractEngine{
 			if(state.equals("game_over")){
 				//g.setBackground(new Color(150, 150, 255));
 				g.drawString("Game Over!", 10, 50);
-				g.drawString("(Press space to return to menu)", 10, 70);
 				//g.drawString("Score: " + Helper.round(-gameY, 2), 10, 30);
 			}
 		}
@@ -69,15 +68,34 @@ public class Engine extends BasicGame implements AbstractEngine{
 	@Override
 	public void keyReleased(int key, char c){
 		super.keyPressed(key, c);
-		if(state.equals("game_over")){
-			if(key == Input.KEY_SPACE){
+		if(key == Input.KEY_ESCAPE){
+			if(state.equals("game") || state.equals("game_over")){
+				ge.paused = false;
 				state = "menu";
+			}
+			else if(state.equals("menu")){
+				if(Main.debug){
+					System.out.println("Exiting system");
+				}
+				System.exit(0);
+			}
+		}
+		if(ge.paused == true || state.equals("game_over")){
+			if(key == Input.KEY_SPACE){
+				ge.paused = false;
+				state = "menu";
+			}
+			if(key == Input.KEY_ENTER){
+				ge.paused = false;
+				ge.reset();
+				state = "game";
 			}
 		}
 	}
 	
 
 	public void startGame(){
+		ge.reset();
 		state = "game";
 	}
 
