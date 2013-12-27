@@ -12,6 +12,13 @@ import org.newdawn.slick.AppGameContainer;
  * 
  * Version History:
  * 
+ * Pre-Alpha 0.1.2.2 (2013-12-27)
+ *   Added layering system
+ *   Added engine property system
+ *   Sorted files
+ *     Renamed engine related files
+ *   Other minor fixes
+ * 
  * Pre-Alpha 0.1.2.1 (2013-12-25)
  *   Added option of restarting and exiting to menu in pausing and after game over
  *   Other minor fixes
@@ -54,7 +61,7 @@ import org.newdawn.slick.AppGameContainer;
  * 
  */
 
-@Version(value = "Pre-Alpha 0.1.2.1", lastUpdate = "2013-12-25")
+@Version(value = "Pre-Alpha 0.1.2.2", lastUpdate = "2013-12-27")
 public final class Main{
 	
 	private Main(){
@@ -67,7 +74,7 @@ public final class Main{
 	
 	public static void main(String[] args){
 		try{
-			AppGameContainer app = new AppGameContainer(new Engine());
+			AppGameContainer app = new AppGameContainer(new MainEngine());
 			app.setDisplayMode(gameFrameWidth, gameFrameHeight, false);
 			//app.setShowFPS(false);
 			app.setMinimumLogicUpdateInterval(20);

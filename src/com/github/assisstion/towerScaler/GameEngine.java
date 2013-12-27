@@ -1,5 +1,6 @@
 package com.github.assisstion.towerScaler;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -18,11 +19,11 @@ import com.github.assisstion.towerScaler.entity.GravitationalEntity;
 import com.github.assisstion.towerScaler.entity.PlatformBlock;
 import com.github.assisstion.towerScaler.entity.Player;
 
-public class GameEngine implements AbstractEngine{
+public class GameEngine extends AbstractEngine{
 	
 	//Set to false to reset
 	protected boolean initialized;
-	protected Engine engine;
+	protected MainEngine engine;
 	protected Set<Entity> entities;
 	protected Set<CollisionEntity> collisionObjects;
 	protected Set<GravitationalEntity> collidables;
@@ -46,7 +47,7 @@ public class GameEngine implements AbstractEngine{
 	//Number of frames since last touching block
 	protected int blockCounter;
 	
-	public GameEngine(Engine parent){
+	public GameEngine(MainEngine parent){
 		engine = parent;
 	}
 	
@@ -101,6 +102,12 @@ public class GameEngine implements AbstractEngine{
 	}
 	
 	@Override
+	public void render(GameContainer gc, Graphics g, int layer){
+		//Ignore layer
+		render(gc, g);
+	}
+	
+	@Override
 	public void render(GameContainer gc, Graphics g){
 		g.setBackground(new Color(150, 150, 255));
 		//g.setBackground(new Color((int)(Math.random() * 255), (int)(Math.random() * 255), (int)(Math.random() * 255)));
@@ -129,6 +136,11 @@ public class GameEngine implements AbstractEngine{
 		}
 		if(paused || getState().equals("game_over")){
 			g.drawString("(Press space to return to menu, press enter to restart)", 10, 70);
+		}
+		if(getState().equals("game_over")){
+			//g.setBackground(new Color(150, 150, 255));
+			g.drawString("Game Over!", 10, 50);
+			//g.drawString("Score: " + Helper.round(-gameY, 2), 10, 30);
 		}
 	}
 	
@@ -712,19 +724,9 @@ public class GameEngine implements AbstractEngine{
 			}
 		}
 	}
-	
-	@Override
-	public String getState(){
-		return getParent().getState();
-	}
-	
-	@Override
-	public void setState(String state){
-		getParent().setState(state);
-	}
 
 	@Override
-	public Engine getParent(){
+	public MainEngine getParent(){
 		return engine;
 	}
 	
@@ -734,5 +736,17 @@ public class GameEngine implements AbstractEngine{
 	
 	public void reset(){
 		initialized = false;
+	}
+
+	@Override
+	public Set<Integer> renderableLayers(){
+		return Collections.singleton(0);
+	}
+
+	@Override
+	public Set<String> renderingStates(){
+		Set<String> states = new HashSet<String>();
+		Collections.addAll(states, "game", "game_over");
+		return states;
 	}
 }

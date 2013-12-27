@@ -1,6 +1,9 @@
 package com.github.assisstion.towerScaler;
 
 import java.awt.Font;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
@@ -10,12 +13,12 @@ import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.ComponentListener;
 
-public class MenuEngine implements AbstractEngine{
+public class MenuEngine extends AbstractEngine{
 	
-	protected Engine engine;
+	protected MainEngine engine;
 	protected TSTextButton button;
 	
-	public MenuEngine(Engine e){
+	public MenuEngine(MainEngine e){
 		engine = e;
 	}
 	
@@ -25,6 +28,23 @@ public class MenuEngine implements AbstractEngine{
 	
 	@Override
 	public void render(GameContainer gc, Graphics g) throws SlickException{
+		render(gc, g, 0);
+	}
+
+	@Override
+	public void render(GameContainer gc, Graphics g, int layer)
+			throws SlickException{
+		switch(layer){
+			case 0:
+				render0(gc, g);
+				break;
+			case 1:
+				render1(gc, g);
+				break;
+		}
+	}
+	
+	protected void render0(GameContainer gc, Graphics g) throws SlickException{
 		g.setBackground(new Color(75, 255, 75));
 		Font font = new Font("Calibri", Font.PLAIN, 40);
 		TrueTypeFont ttf = new TrueTypeFont(font, true);
@@ -47,10 +67,17 @@ public class MenuEngine implements AbstractEngine{
 		g.drawString(text, ((Main.getGameFrameWidth() - ttf.getWidth(text)) / 2), 200);
 		*/
 	}
+	
+	protected void render1(GameContainer gc, Graphics g){
+		/*
+		g.setColor(new Color(0, 0, 255));
+		g.fillRect(0, 0, 400, 400);
+		*/
+	}
 
 	@Override
 	public void init(GameContainer gc){
-		button = new TSTextButton(gc, Main.getGameFrameWidth() / 2, 200,
+		button = new TSTextButton(gc, this, "menu", Main.getGameFrameWidth() / 2, 200,
 				"Start Game", new TrueTypeFont(Helper.getDefaultFont(), true), 
 				Color.black, new Color(150, 150, 255), Color.black);
 		button.addListener(new ComponentListener(){
@@ -73,17 +100,19 @@ public class MenuEngine implements AbstractEngine{
 	}
 
 	@Override
-	public String getState(){
-		return getParent().getState();
-	}
-	
-	@Override
-	public void setState(String state){
-		getParent().setState(state);
+	public MainEngine getParent(){
+		return engine;
 	}
 
 	@Override
-	public Engine getParent(){
-		return engine;
+	public Set<Integer> renderableLayers(){
+		Set<Integer> layers = new HashSet<Integer>();
+		Collections.addAll(layers, 0, 1);
+		return layers;
+	}
+	
+	@Override
+	public Set<String> renderingStates(){
+		return Collections.singleton("menu");
 	}
 }
