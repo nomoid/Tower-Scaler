@@ -13,10 +13,14 @@ import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.ComponentListener;
 
+import com.github.assisstion.TSToolkit.TSFocusTextButton;
+import com.github.assisstion.towerScaler.TSToolkit.TSMenu;
+
 public class MenuEngine extends AbstractEngine{
 	
 	protected MainEngine engine;
-	protected TSTextButton button;
+	protected TSFocusTextButton startButton;
+	protected TSFocusTextButton highScoreButton;
 	
 	public MenuEngine(MainEngine e){
 		engine = e;
@@ -57,7 +61,8 @@ public class MenuEngine extends AbstractEngine{
 		g.setFont(ttfs);
 		String author = "by assisstion";
 		g.drawString(author, ((Main.getGameFrameWidth() - ttfs.getWidth(author)) / 2), 150);
-		button.render(gc, g);
+		startButton.render(gc, g);
+		highScoreButton.render(gc, g);
 		/*
 		String text = "Start Game";
 		g.setColor(new Color(150, 150, 255));
@@ -69,6 +74,10 @@ public class MenuEngine extends AbstractEngine{
 	}
 	
 	protected void render1(GameContainer gc, Graphics g){
+		String shs = getEngineProperty("show_highscores");
+		if(shs != null && shs.equals("true")){
+			
+		}
 		/*
 		g.setColor(new Color(0, 0, 255));
 		g.fillRect(0, 0, 400, 400);
@@ -77,13 +86,24 @@ public class MenuEngine extends AbstractEngine{
 
 	@Override
 	public void init(GameContainer gc){
-		button = new TSTextButton(gc, this, "menu", Main.getGameFrameWidth() / 2, 200,
+		startButton = new TSFocusTextButton(gc, this, Main.getGameFrameWidth() / 2, 200,
 				"Start Game", new TrueTypeFont(Helper.getDefaultFont(), true), 
 				Color.black, new Color(150, 150, 255), Color.black);
-		button.addListener(new ComponentListener(){
+		startButton.addListener(new ComponentListener(){
 			@Override
 			public void componentActivated(AbstractComponent source){
 				getParent().startGame();
+			}
+		});
+		highScoreButton = new TSFocusTextButton(gc, this, Main.getGameFrameWidth() / 2, 240,
+				"Highscores", new TrueTypeFont(Helper.getDefaultFont(), true), 
+				Color.black, new Color(255, 150, 150), Color.black);
+		highScoreButton.addListener(new ComponentListener(){
+			@Override
+			public void componentActivated(AbstractComponent source){
+				HighScoreMenu hsm = getParent().getHighScoreMenu();
+				hsm.setVisible(true);
+				addMenu(hsm);
 			}
 		});
 		/*
@@ -114,5 +134,15 @@ public class MenuEngine extends AbstractEngine{
 	@Override
 	public Set<String> renderingStates(){
 		return Collections.singleton("menu");
+	}
+
+	@Override
+	public boolean hasFocus(){
+		for(TSMenu menu : getMenus()){
+			if(menu.isVisible()){
+				return false;
+			}
+		}
+		return getState().equals("menu");
 	}
 }

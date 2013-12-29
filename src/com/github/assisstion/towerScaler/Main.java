@@ -12,6 +12,16 @@ import org.newdawn.slick.AppGameContainer;
  * 
  * Version History:
  * 
+ * Pre-Alpha 0.1.3.0 (2013-12-29)
+ *   Added TSToolkit system
+ *   Added menu system
+ *   Added high score menu
+ *   Added high score system
+ *   Sorted files
+ *     Renamed files
+ *     Moved files to TSToolkit package
+ *   Other minor fixes
+ * 
  * Pre-Alpha 0.1.2.2 (2013-12-27)
  *   Added layering system
  *   Added engine property system
@@ -61,7 +71,7 @@ import org.newdawn.slick.AppGameContainer;
  * 
  */
 
-@Version(value = "Pre-Alpha 0.1.2.2", lastUpdate = "2013-12-27")
+@Version(value = "Pre-Alpha 0.1.3.0", lastUpdate = "2013-12-29")
 public final class Main{
 	
 	private Main(){

@@ -1,11 +1,13 @@
 package com.github.assisstion.towerScaler.box;
 
+import com.github.assisstion.TSToolkit.TSBoxable;
+
 
 public class ImmutableBoxableBox implements Box{
 
-	private Boxable b;
+	private TSBoxable b;
 	
-	public ImmutableBoxableBox(Boxable b){
+	public ImmutableBoxableBox(TSBoxable b){
 		this.b = b;
 	}
 

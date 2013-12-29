@@ -46,9 +46,13 @@ public class GameEngine extends AbstractEngine{
 	protected boolean rightOfBlock;
 	//Number of frames since last touching block
 	protected int blockCounter;
+	protected String name;
+	protected long hash;
+	protected boolean legit;
 	
 	public GameEngine(MainEngine parent){
 		engine = parent;
+		parent.addKeyListener(this);
 	}
 	
 	protected GameEngine(){
@@ -99,6 +103,8 @@ public class GameEngine extends AbstractEngine{
 		rightOfBlock = false;
 		noClip = false;
 		jumpCounter = 2;
+		name = "";
+		legit = true;
 	}
 	
 	@Override
@@ -136,6 +142,7 @@ public class GameEngine extends AbstractEngine{
 		}
 		if(paused || getState().equals("game_over")){
 			g.drawString("(Press space to return to menu, press enter to restart)", 10, 70);
+			g.drawString("Name: " + name, 10, 90);
 		}
 		if(getState().equals("game_over")){
 			//g.setBackground(new Color(150, 150, 255));
@@ -147,6 +154,10 @@ public class GameEngine extends AbstractEngine{
 	@Override
 	public void update(GameContainer gc, int delta){
 		Input input = gc.getInput();
+		if(getState().equals("game_over")){
+			gameOverUpdate(input, delta);
+			return;
+		}
 		if(!pauseCheck(input)){
 			return;
 		}
@@ -158,6 +169,12 @@ public class GameEngine extends AbstractEngine{
 		cleanupCheck();
 	}
 	
+	protected void gameOverUpdate(Input input, int delta){
+		
+	}
+	
+	
+
 	protected boolean pauseCheck(Input input){
 		if(paused){
 			if(input.isKeyDown(Input.KEY_R)){
@@ -180,6 +197,7 @@ public class GameEngine extends AbstractEngine{
 		gameX = player.getX1() - (Main.getGameFrameWidth() / 2);
 		if(input.isKeyDown(Input.KEY_L)){
 			scrollingEnabled = false;
+			legit = false;
 		}
 		if(input.isKeyDown(Input.KEY_O)){
 			scrollingEnabled = true;
@@ -429,12 +447,14 @@ public class GameEngine extends AbstractEngine{
 	protected void inputCheck(Input input, int delta){
 		if(input.isKeyDown(Input.KEY_Z)){
 			Main.debug = true;
+			legit = false;
 		}
 		if(input.isKeyDown(Input.KEY_X)){
 			Main.debug = false;
 		}
 		if(input.isKeyDown(Input.KEY_N)){
 			noClip = true;
+			legit = false;
 		}
 		if(input.isKeyDown(Input.KEY_M)){
 			noClip = false;
@@ -513,6 +533,7 @@ public class GameEngine extends AbstractEngine{
 			if(Main.debug){
 				System.out.println("Game Over! Score: " + Helper.round(-gameY, 2));
 			}
+			
 			setState("game_over");
 			initialized = false;
 		}
@@ -748,5 +769,39 @@ public class GameEngine extends AbstractEngine{
 		Set<String> states = new HashSet<String>();
 		Collections.addAll(states, "game", "game_over");
 		return states;
+	}
+
+	//Always returns false
+	@Override
+	public boolean hasFocus(){
+		return false;
+	}
+	
+	@Override
+	public void keyPressed(int key, char c){
+		if(key == Input.KEY_ESCAPE){
+			return;
+		}
+		if(getState().equals("game_over")){
+			if(key == Input.KEY_SPACE || key == Input.KEY_ENTER){
+				return;
+			}
+			if(key == Input.KEY_BACK || key == Input.KEY_DELETE){
+				if(name.length() > 0){
+					name = name.substring(0, name.length() - 1);
+				}
+			}
+			else{
+				name += c;
+			}
+		}
+	}
+	
+	public Score getScore(){
+		return new Score(-gameY, name, hash);
+	}
+	
+	public boolean isLegit(){
+		return legit;
 	}
 }

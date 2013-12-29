@@ -1,24 +1,24 @@
-package com.github.assisstion.towerScaler;
+package com.github.assisstion.TSToolkit;
 
+import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.GUIContext;
 
 import com.github.assisstion.towerScaler.box.BoxImpl;
-import com.github.assisstion.towerScaler.box.Boxable;
 import com.github.assisstion.towerScaler.box.MutableBoxable;
 
-public abstract class TSComponent extends AbstractComponent implements Boxable{
+public abstract class TSComponent extends AbstractComponent implements TSRenderableObject{
 	
 	protected MutableBoxable location;
 
 	public TSComponent(GUIContext container){
-		this(container, 0, 0, 0, 0);
+		this(container, 0, 0);
 	}
 	
 	public TSComponent(GUIContext container, int x, int y){
-		this(container, x, y, 0, 0);
+		this(container, x, y, x, y);
 	}
 	
 	public TSComponent(GUIContext container, int x1, int y1, int x2, int y2){
@@ -29,12 +29,12 @@ public abstract class TSComponent extends AbstractComponent implements Boxable{
 
 	@Override
 	public int getHeight(){
-		return (int)(location.getX2() - location.getX1());
+		return (int)(location.getY2() - location.getY1());
 	}
 
 	@Override
 	public int getWidth(){
-		return (int)(location.getY2() - location.getY1());
+		return (int)(location.getX2() - location.getX1());
 	}
 
 	@Override
@@ -68,12 +68,17 @@ public abstract class TSComponent extends AbstractComponent implements Boxable{
 	}
 
 	@Override
-	public abstract void render(GUIContext container, Graphics g) throws SlickException;
-
-	@Override
 	public void setLocation(int x, int y){
 		if(location != null){
 			location.setPos(x, x + location.getX2() - location.getX1(), y, y + location.getY2() - location.getX1());
 		}
 	}
+	
+	@Override
+	public void render(GUIContext container, Graphics g) throws SlickException{
+		render((GameContainer) container, g, 0, 0);
+	}
+	
+	@Override
+	public abstract void render(GameContainer gc, Graphics g, int x, int y) throws SlickException;
 }

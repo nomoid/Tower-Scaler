@@ -3,14 +3,10 @@ package com.github.assisstion.towerScaler;
 import java.util.Map;
 import java.util.Set;
 
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
+import com.github.assisstion.TSToolkit.TSMouseFocusable;
+import com.github.assisstion.towerScaler.TSToolkit.TSMenu;
 
-public interface Engine{
-	void render(GameContainer gc, Graphics g, int layer) throws Exception;
-	void render(GameContainer gc, Graphics g) throws Exception;
-	void init(GameContainer gc) throws Exception;
-	void update(GameContainer gc, int delta) throws Exception;
+public interface Engine extends LayeredDisplay, TSMouseFocusable{
 	void setState(String state);
 	void setEngineProperties(Map<String, String> properties);
 	void setEngineProperty(String key, String value);
@@ -18,6 +14,9 @@ public interface Engine{
 	Map<String, String> getEngineProperties();
 	String getEngineProperty(String key);
 	Engine getParent();
-	Set<Integer> renderableLayers();
 	Set<String> renderingStates();
+	void addMenu(TSMenu menu);
+	void removeMenu(TSMenu menu);
+	Set<TSMenu> getMenus();
+	void setMenus(Set<TSMenu> menus);
 }

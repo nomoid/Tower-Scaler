@@ -1,12 +1,16 @@
-package com.github.assisstion.towerScaler;
+package com.github.assisstion.towerScaler.TSToolkit;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Font;
+import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.gui.GUIContext;
 
+import com.github.assisstion.TSToolkit.TSComponent;
+import com.github.assisstion.towerScaler.Engine;
+import com.github.assisstion.towerScaler.Helper;
 import com.github.assisstion.towerScaler.box.BoxHelper;
 
 
@@ -62,21 +66,6 @@ public class TSTextButton extends TSComponent{
 		this.alignY = alignY;
 		this.parent = parent;
 		this.onState = onState;
-	}
-
-	@Override
-	public void render(GUIContext container, Graphics g) throws SlickException{
-		Color tempColor = g.getColor();
-		Font tempFont = g.getFont();
-		g.setColor(getBoxFillColor());
-		g.fillRect(getX(), getY(), getWidth(), getHeight());
-		g.setColor(getBoxBorderColor());
-		g.drawRect(getX(), getY(), getWidth(), getHeight());
-		g.setColor(getTextColor());
-		g.setFont(getFont());
-		g.drawString(getText(), getTextX(), getTextY());
-		g.setColor(tempColor);
-		g.setFont(tempFont);
 	}
 
 	@Override
@@ -224,5 +213,21 @@ public class TSTextButton extends TSComponent{
 	
 	public String getOnPropertyValue(){
 		return onPropertyValue;
+	}
+
+	@Override
+	public void render(GameContainer gc, Graphics g, int x, int y)
+			throws SlickException{
+		Color tempColor = g.getColor();
+		Font tempFont = g.getFont();
+		g.setColor(getBoxFillColor());
+		g.fillRect(getX() + x, getY() + y, getWidth(), getHeight());
+		g.setColor(getBoxBorderColor());
+		g.drawRect(getX() + x, getY() + y, getWidth(), getHeight());
+		g.setColor(getTextColor());
+		g.setFont(getFont());
+		g.drawString(getText(), getTextX() + x, getTextY() + y);
+		g.setColor(tempColor);
+		g.setFont(tempFont);
 	}
 }
