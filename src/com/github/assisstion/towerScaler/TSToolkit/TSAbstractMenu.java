@@ -2,6 +2,7 @@ package com.github.assisstion.towerScaler.TSToolkit;
 
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.SlickException;
 import org.newdawn.slick.gui.GUIContext;
 
 import com.github.assisstion.TSToolkit.TSMultiContainer;
@@ -23,7 +24,7 @@ public abstract class TSAbstractMenu extends TSMultiContainer implements TSMenu{
 	protected boolean visible;
 
 	@Override
-	public void render(GameContainer gc, Graphics g) throws Exception{
+	public void render(GameContainer gc, Graphics g) throws SlickException{
 		render(gc, g, 0);
 	}
 

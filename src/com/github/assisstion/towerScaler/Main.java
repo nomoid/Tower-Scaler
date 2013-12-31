@@ -12,6 +12,13 @@ import org.newdawn.slick.AppGameContainer;
  * 
  * Version History:
  * 
+ * Pre-Alpha 0.1.3.1 (2013-12-31)
+ *   Added high score saving
+ *     Added file output helper classes
+ *     Saves using system serialization
+ *   Added score hashing
+ *   Other minor fixes
+ * 
  * Pre-Alpha 0.1.3.0 (2013-12-29)
  *   Added TSToolkit system
  *   Added menu system
@@ -71,7 +78,7 @@ import org.newdawn.slick.AppGameContainer;
  * 
  */
 
-@Version(value = "Pre-Alpha 0.1.3.0", lastUpdate = "2013-12-29")
+@Version(value = "Pre-Alpha 0.1.3.1", lastUpdate = "2013-12-31")
 public final class Main{
 	
 	private Main(){
@@ -90,6 +97,8 @@ public final class Main{
 			app.setMinimumLogicUpdateInterval(20);
 			app.setMaximumLogicUpdateInterval(20);
 			app.setTargetFrameRate(50);
+			app.setAlwaysRender(true);
+			app.setUpdateOnlyWhenVisible(false);
 			if(debug){
 				System.out.println("App started!");
 			}

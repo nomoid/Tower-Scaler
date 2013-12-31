@@ -40,7 +40,7 @@ public class HighScoreMenu extends TSWindowMenu{
 					getHeight() * (i + 4) / 16, (i + 1) + ". " + score.getName(), 
 					new TrueTypeFont(Helper.getDefaultFont(), true), Color.black, -1, 0);
 			TSTextLabel number = new TSTextLabel(gc, getWidth() * 4 / 5, 
-					getHeight() * (i + 4) / 16, String.valueOf(Math.round(score.getScore() * 100) / 100),
+					getHeight() * (i + 4) / 16, String.valueOf(Math.round(score.getScore() * 100) / 100.0),
 					new TrueTypeFont(Helper.getDefaultFont(), true), Color.black, 1, 0);
 			name.render(gc, g, getContainerX() + x, getContainerY() + y);
 			number.render(gc, g, getContainerX() + x, getContainerY() + y);
@@ -55,5 +55,9 @@ public class HighScoreMenu extends TSWindowMenu{
 	
 	public HighScoreTable getHighScores(){
 		return highScores;
+	}
+	
+	public void setHighScores(HighScoreTable highScores){
+		this.highScores = highScores;
 	}
 }

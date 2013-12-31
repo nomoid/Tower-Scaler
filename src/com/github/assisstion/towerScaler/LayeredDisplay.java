@@ -4,8 +4,9 @@ import java.util.Set;
 
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.SlickException;
 
 public interface LayeredDisplay extends Display{
-	void render(GameContainer gc, Graphics g, int layer) throws Exception;
+	void render(GameContainer gc, Graphics g, int layer) throws SlickException;
 	Set<Integer> renderableLayers();
 }

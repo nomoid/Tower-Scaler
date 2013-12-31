@@ -7,6 +7,7 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.KeyListener;
+import org.newdawn.slick.SlickException;
 
 import com.github.assisstion.towerScaler.TSToolkit.TSMenu;
 
@@ -14,7 +15,7 @@ import com.github.assisstion.towerScaler.TSToolkit.TSMenu;
 public abstract class AbstractEngine implements Engine, KeyListener{
 	
 	@Override
-	public void render(GameContainer gc, Graphics g) throws Exception{
+	public void render(GameContainer gc, Graphics g) throws SlickException{
 		render(gc, g, 0);
 	}
 

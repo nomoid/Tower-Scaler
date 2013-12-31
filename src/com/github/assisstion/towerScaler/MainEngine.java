@@ -1,8 +1,16 @@
 package com.github.assisstion.towerScaler;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -15,6 +23,9 @@ import org.newdawn.slick.KeyListener;
 import org.newdawn.slick.SlickException;
 
 import com.github.assisstion.towerScaler.TSToolkit.TSMenu;
+import com.github.assisstion.towerScaler.data.DataHelper;
+import com.github.assisstion.towerScaler.data.SimpleEncryptionInputStream;
+import com.github.assisstion.towerScaler.data.SimpleEncryptionOutputStream;
 
 public class MainEngine extends BasicGame implements Engine{
 	
@@ -127,6 +138,33 @@ public class MainEngine extends BasicGame implements Engine{
 	public void init(GameContainer gc) throws SlickException{
 		wm = new HighScoreMenu(gc, (Main.getGameFrameWidth() / 4), (Main.getGameFrameHeight() / 4),
 				(Main.getGameFrameWidth() * 3 / 4), (Main.getGameFrameHeight() * 3 / 4));
+		try{
+			File hsFile = new File("data" + File.separator + "highscores.dat");
+			new File(hsFile.getParent()).mkdirs();
+			hsFile.createNewFile();
+			List<? extends Object> list = DataHelper.readObjects(
+					new BufferedInputStream(new SimpleEncryptionInputStream(
+					new FileInputStream(hsFile), (byte)(255))));
+			if(list == null){
+				throw new IOException();
+			}
+			Object obj = list.get(0);
+			if(obj instanceof HighScoreTable){
+				HighScoreTable hst = (HighScoreTable) obj;
+				wm.setHighScores(hst);
+			}
+			else{
+				throw new IOException();
+			}
+		}
+		catch(FileNotFoundException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch(IOException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		state = "menu";
 		me.init(gc);
 		//ge.init(gc);
@@ -168,23 +206,27 @@ public class MainEngine extends BasicGame implements Engine{
 					System.exit(0);
 				}
 			}
-			if(ge.paused == true || state.equals("game_over")){
-				if(key == Input.KEY_SPACE){
+			if(key == Input.KEY_SPACE){
+				if(ge.paused == true || state.equals("game_over")){
 					ge.paused = false;
-					if(ge.isLegit()){
-						wm.getHighScores().addScore(ge.getScore());
-					}
+					updateHighScore();
 					state = "menu";
 					break listen;
 				}
-				if(key == Input.KEY_ENTER){
+				if(state.equals("menu")){
+					startGame();
+				}
+			}
+			if(key == Input.KEY_ENTER){
+				if(ge.paused == true || state.equals("game_over")){
 					ge.paused = false;
-					if(ge.isLegit()){
-						wm.getHighScores().addScore(ge.getScore());
-					}
+					updateHighScore();
 					ge.reset();
 					state = "game";
 					break listen;
+				}
+				if(state.equals("menu")){
+					startGame();
 				}
 			}
 		}
@@ -193,6 +235,29 @@ public class MainEngine extends BasicGame implements Engine{
 		}
 	}
 	
+	protected void updateHighScore(){
+		if(ge.isLegit()){
+			wm.getHighScores().addScore(ge.getScore());
+			try{
+				File hsFile = new File("data" + File.separator + "highscores.dat");
+				new File(hsFile.getParent()).mkdirs();
+				hsFile.createNewFile();
+				DataHelper.writeObjects(hsFile, new BufferedOutputStream(
+						new SimpleEncryptionOutputStream(
+						new FileOutputStream(hsFile), (byte)(255))), 
+						Collections.singletonList(wm.getHighScores()));
+			}
+			catch(FileNotFoundException e){
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch(IOException e){
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
 	@Override
 	public void keyPressed(int key, char c){
 		super.keyPressed(key, c);

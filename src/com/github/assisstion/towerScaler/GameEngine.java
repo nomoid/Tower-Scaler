@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import org.newdawn.slick.Color;
@@ -49,6 +50,9 @@ public class GameEngine extends AbstractEngine{
 	protected String name;
 	protected long hash;
 	protected boolean legit;
+	protected boolean legitHash;
+	protected int hv;
+	protected boolean finalHashed;
 	
 	public GameEngine(MainEngine parent){
 		engine = parent;
@@ -62,6 +66,8 @@ public class GameEngine extends AbstractEngine{
 	@Override
 	public void init(GameContainer gc){
 		initialized = true;
+		hash = 0;
+		hv = 0;
 		entities = new HashSet<Entity>();
 		collisionObjects = new HashSet<CollisionEntity>();
 		collidables = new HashSet<GravitationalEntity>();
@@ -105,6 +111,23 @@ public class GameEngine extends AbstractEngine{
 		jumpCounter = 2;
 		name = "";
 		legit = true;
+		legitHash = true;
+		if(Main.debug){
+			legit = false;
+			legitHash = false;
+		}
+		finalHashed = false;
+		Random random = new Random();
+		hv = (byte) random.nextInt();
+		while(hv % 16 == 0){
+			hv = (byte) random.nextInt();
+		}
+		if(legitHash){
+			hash ^= hv << 23;
+		}
+		gc.getInput().clearControlPressedRecord();
+		gc.getInput().clearKeyPressedRecord();
+		gc.getInput().clearMousePressedRecord();
 	}
 	
 	@Override
@@ -136,17 +159,18 @@ public class GameEngine extends AbstractEngine{
 			if(!getState().equals("game_over")){
 				g.drawString("(" + aboveBlock + ", " + belowBlock + ", " + leftOfBlock + ", " + rightOfBlock + ")", 10, 90);
 			}
+			g.drawString((legit & legitHash) + ": " + hv + "-" + String.valueOf(hash), 10, 130);
 		}
 		if(paused){
 			g.drawString("Game paused!", 10, 50);
 		}
 		if(paused || getState().equals("game_over")){
 			g.drawString("(Press space to return to menu, press enter to restart)", 10, 70);
-			g.drawString("Name: " + name, 10, 90);
 		}
 		if(getState().equals("game_over")){
 			//g.setBackground(new Color(150, 150, 255));
 			g.drawString("Game Over!", 10, 50);
+			g.drawString("Name: " + name, 10, 90);
 			//g.drawString("Score: " + Helper.round(-gameY, 2), 10, 30);
 		}
 	}
@@ -198,12 +222,20 @@ public class GameEngine extends AbstractEngine{
 		if(input.isKeyDown(Input.KEY_L)){
 			scrollingEnabled = false;
 			legit = false;
+			legitHash = false;
+			hash = 0;
 		}
 		if(input.isKeyDown(Input.KEY_O)){
 			scrollingEnabled = true;
 		}
 		if(scrollingEnabled){
+			int gY = (int)(Helper.round(-gameY, 6) * 100);
 			gameY -= -(gameY / 1000) + 1;
+			if(legitHash){
+				hash ^= (((((hash >> 31) & 4294967295L) + 
+						((((int)(Helper.round(-gameY, 6) * 100)) - gY) * hv)) % 4294967296L) << 31)
+						^ (((hash >> 31) & 4294967295L) << 31);
+			}
 		}
 		if(gameY <= nextUpdateY){
 			Set<PlatformBlock> addToEntities = new HashSet<PlatformBlock>();
@@ -448,6 +480,8 @@ public class GameEngine extends AbstractEngine{
 		if(input.isKeyDown(Input.KEY_Z)){
 			Main.debug = true;
 			legit = false;
+			legitHash = false;
+			hash = 0;
 		}
 		if(input.isKeyDown(Input.KEY_X)){
 			Main.debug = false;
@@ -455,6 +489,8 @@ public class GameEngine extends AbstractEngine{
 		if(input.isKeyDown(Input.KEY_N)){
 			noClip = true;
 			legit = false;
+			legitHash = false;
+			hash = 0;
 		}
 		if(input.isKeyDown(Input.KEY_M)){
 			noClip = false;
@@ -530,15 +566,33 @@ public class GameEngine extends AbstractEngine{
 			player.setYVelocity(0);
 		}
 		if(player.getY1() - gameY > Main.getGameFrameHeight() + player.getHeight()){
-			if(Main.debug){
-				System.out.println("Game Over! Score: " + Helper.round(-gameY, 2));
-			}
-			
-			setState("game_over");
-			initialized = false;
+			gameOver();
 		}
 	}
 	
+	protected void gameOver(){
+		if(Main.debug){
+			System.out.println("Game Over! Score: " + Helper.round(-gameY, 2));
+		}
+		setState("game_over");
+		try{
+			String[] sa = Main.class.getAnnotation(Version.class).value().split("\\x2e");
+			if(legitHash){
+				hash ^= (Integer.parseInt(sa[0].substring(sa[0].length() - 1)) << 13)
+						^ (Integer.parseInt(sa[1]) << 11) 
+						^ (Integer.parseInt(sa[2]) << 7)
+						^ (Integer.parseInt(sa[3]) << 3);
+			}
+		}
+		catch(RuntimeException e){
+			e.printStackTrace();
+			legitHash = false;
+			hash = 0;
+		}
+		initialized = false;
+		//
+	}
+
 	protected void postCollisionCheck(){
 		for(GravitationalEntity ge : collidables){
 			Box safeBox = safeBoxes.get(ge);
@@ -788,20 +842,43 @@ public class GameEngine extends AbstractEngine{
 			}
 			if(key == Input.KEY_BACK || key == Input.KEY_DELETE){
 				if(name.length() > 0){
+					char hc = name.charAt(name.length() - 1);
 					name = name.substring(0, name.length() - 1);
+					if(legitHash){
+						hash ^= (((byte)((((hash >> 15) & 255) - hc) % 256)) << 15) 
+								^ (((hash >> 15) & 255) << 15);
+					}
 				}
 			}
 			else{
 				name += c;
+				if(legitHash){
+					hash ^= (((byte)((((hash >> 15) & 255) + c) % 256)) << 15) 
+							^ (((hash >> 15) & 255) << 15);
+				}
 			}
 		}
 	}
 	
 	public Score getScore(){
+		finalHash();
 		return new Score(-gameY, name, hash);
 	}
 	
+	protected void finalHash(){
+		if(legitHash && !finalHashed){
+			finalHashed = true;
+			hash ^= hv ^ (hv << 7) ^ (hash & 7);
+			hash += hash % 7;
+			hash /= 7;
+		}
+	}
+
 	public boolean isLegit(){
 		return legit;
+	}
+	
+	public boolean isLegitHash(){
+		return legitHash;
 	}
 }
