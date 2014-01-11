@@ -5,13 +5,12 @@ import org.newdawn.slick.Font;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.gui.GUIContext;
 
 import com.github.assisstion.TSToolkit.TSComponent;
-import com.github.assisstion.towerScaler.Engine;
 import com.github.assisstion.towerScaler.Helper;
 import com.github.assisstion.towerScaler.box.BoxHelper;
+import com.github.assisstion.towerScaler.engine.Engine;
 
 
 public class TSTextButton extends TSComponent{
@@ -40,7 +39,7 @@ public class TSTextButton extends TSComponent{
 	}
 	
 	public TSTextButton(GUIContext container, Engine parent, String onState, int x, int y, String text){
-		this(container, parent, onState, x, y, text, new TrueTypeFont(Helper.getDefaultFont(), true));
+		this(container, parent, onState, x, y, text, Helper.getDefaultFont());
 	}
 	
 	public TSTextButton(GUIContext container, Engine parent, String onState, int x, int y, String text, Font font){

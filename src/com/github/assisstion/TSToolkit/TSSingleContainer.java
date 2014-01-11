@@ -37,9 +37,13 @@ public abstract class TSSingleContainer extends TSComponent implements TSContain
 
 	protected void setComponent(TSComponent component){
 		this.component = component;
+		component.setParent(this);
 	}
 	
 	protected void removeComponent(){
+		if(component != null){
+			component.setParent(null);
+		}
 		this.component = null;
 	}
 	

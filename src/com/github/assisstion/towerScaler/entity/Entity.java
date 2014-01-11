@@ -114,7 +114,7 @@ public class Entity implements Comparable<Entity>, MutableBoxable{
 		round();
 	}
 	
-	/**
+	/* INFO
 	 * @return new X value
 	 */
 	public double incrementX(double i){
@@ -123,7 +123,7 @@ public class Entity implements Comparable<Entity>, MutableBoxable{
 		return xLocation;
 	}
 	
-	/**
+	/* INFO
 	 * @return new Y value
 	 */
 	public double incrementY(double j){
@@ -138,7 +138,7 @@ public class Entity implements Comparable<Entity>, MutableBoxable{
 		round();
 	}
 
-	/**
+	/* INFO
 	 * 
 	 * @param x1
 	 * @param x2 ignored

@@ -37,8 +37,16 @@ public class TSFocusButton extends TSComponent{
 	
 	@Override
 	public void mouseReleased(int button, int x, int y){
-		if(getParent().hasFocus()){
-			if(BoxHelper.pointIn(this, x, y)){
+		/* DEBUG
+		System.out.println("mx: " + x);
+		System.out.println("my: " + y);
+		*/
+		if(getMouseParent().hasInputFocus()){
+			/* DEBUG
+			System.out.println("x: " + getRealLocation().getX1() + "; " + getRealLocation().getX2());
+			System.out.println("y: " + getRealLocation().getY1() + "; " + getRealLocation().getY2());
+			*/
+			if(BoxHelper.pointIn(getRealLocation(), x, y)){
 				notifyListeners();
 			}
 		}
@@ -52,7 +60,7 @@ public class TSFocusButton extends TSComponent{
 		return boxBorderColor;
 	}
 	
-	public TSMouseFocusable getParent(){
+	public TSMouseFocusable getMouseParent(){
 		return parent;
 	}
 	

@@ -10,8 +10,9 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.gui.GUIContext;
 
 import com.github.assisstion.TSToolkit.TSBox;
+import com.github.assisstion.TSToolkit.TSColoredBox;
 
-public class TSBoxMenu extends TSAbstractMenu{
+public class TSBoxMenu extends TSAbstractMenu implements TSColoredBox{
 	
 	public TSBoxMenu(GUIContext container, Color boxFillColor, Color boxBorderColor){
 		this(container, 0, 0, boxFillColor, boxBorderColor);
@@ -52,14 +53,16 @@ public class TSBoxMenu extends TSAbstractMenu{
 		initialized = true;
 		box = new TSBox(gc, getX(), getY(), 
 				getX() + getWidth(), getY() + getHeight(), 
-				getBoxFillColor(), getBoxBorderColor());
+				getFillColor(), getBorderColor());
 	}
 	
-	private Color getBoxFillColor(){
+	@Override
+	public Color getFillColor(){
 		return boxFillColor;
 	}
 
-	private Color getBoxBorderColor(){
+	@Override
+	public Color getBorderColor(){
 		return boxBorderColor;
 	}
 

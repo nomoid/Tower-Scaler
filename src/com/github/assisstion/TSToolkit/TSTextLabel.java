@@ -5,7 +5,6 @@ import org.newdawn.slick.Font;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.gui.GUIContext;
 
 import com.github.assisstion.towerScaler.Helper;
@@ -23,7 +22,7 @@ public class TSTextLabel extends TSComponent{
 	}
 	
 	public TSTextLabel(GUIContext container, int x, int y, String text){
-		this(container, x, y, text, new TrueTypeFont(Helper.getDefaultFont(), true));
+		this(container, x, y, text, Helper.getDefaultFont());
 	}
 	
 	public TSTextLabel(GUIContext container, int x, int y, String text, Font font){

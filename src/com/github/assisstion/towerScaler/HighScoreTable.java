@@ -1,7 +1,10 @@
 package com.github.assisstion.towerScaler;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 
 public class HighScoreTable implements Serializable{
 	
@@ -32,9 +35,34 @@ public class HighScoreTable implements Serializable{
 		if(add){
 			scores.add(index, score);
 		}
+		while(scores.size() > maxScores){
+			scores.removeLast();
+		}
 	}
 	
 	public LinkedList<Score> getScores(){
 		return scores;
+	}
+	
+	public void validateScores(){
+		LinkedList<Score> toBeRemoved = new LinkedList<Score>();
+		for(Score score : scores){
+			if(score.name.length() > 20){
+				toBeRemoved.add(score);
+				continue;
+			}
+			for(char c : score.name.toCharArray()){
+				Set<Character> allChars = new HashSet<Character>();
+				Collections.addAll(allChars, Score.legalChars);
+				if(!allChars.contains(c)){
+					toBeRemoved.add(score);
+					break;
+				}
+			}
+		}
+		for(Score score : toBeRemoved){
+			scores.remove(score);
+		}
+		toBeRemoved.clear();
 	}
 }

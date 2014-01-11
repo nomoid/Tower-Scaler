@@ -5,14 +5,15 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.gui.AbstractComponent;
-import org.newdawn.slick.gui.GUIContext;
 import org.newdawn.slick.gui.ComponentListener;
+import org.newdawn.slick.gui.GUIContext;
 
 import com.github.assisstion.TSToolkit.TSFocusButton;
 
 public class TSWindowMenu extends TSBoxMenu{
 	
 	protected TSFocusButton closeButton;
+	protected TSWindowMenu instance = this;
 
 	public TSWindowMenu(GUIContext container, Color boxFillColor, Color boxBorderColor){
 		this(container, 0, 0, boxFillColor, boxBorderColor);
@@ -40,7 +41,7 @@ public class TSWindowMenu extends TSBoxMenu{
 		closeButton.addListener(new ComponentListener(){
 			@Override
 			public void componentActivated(AbstractComponent source){
-				setVisible(false);
+				instance.close();
 			}
 		});
 	}

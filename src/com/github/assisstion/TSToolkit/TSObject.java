@@ -5,4 +5,5 @@ public interface TSObject extends TSBoxable{
 	int getY();
 	int getHeight();
 	int getWidth();
+	TSBoxable getLocation();
 }

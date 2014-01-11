@@ -6,7 +6,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.gui.GUIContext;
 
-public class TSBox extends TSComponent{
+public class TSBox extends TSComponent implements TSColoredBox{
 	
 	protected Color fillColor;
 	protected Color borderColor;

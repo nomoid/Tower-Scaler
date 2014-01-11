@@ -37,9 +37,11 @@ public abstract class TSMultiContainer extends TSComponent implements TSContaine
 
 	protected void addComponent(TSComponent component){
 		components.add(component);
+		component.setParent(this);
 	}
 	
 	protected void removeComponent(TSComponent component){
+		component.setParent(null);
 		components.remove(component);
 	}
 	
@@ -49,6 +51,9 @@ public abstract class TSMultiContainer extends TSComponent implements TSContaine
 	
 	protected void setComponents(List<TSComponent> components){
 		this.components = components;
+		for(TSComponent component : components){
+			component.setParent(this);
+		}
 	}
 
 	@Override

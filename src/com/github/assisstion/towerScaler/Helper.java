@@ -2,32 +2,23 @@ package com.github.assisstion.towerScaler;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.io.File;
+
+import org.newdawn.slick.TrueTypeFont;
 
 public final class Helper{
 	
-	public static String javaroot;
-	
-	static{
-		javaroot = System.getProperty("MF_javaroot");
-		if(javaroot == null){
-			javaroot = "";
-		}
-		else{
-			javaroot += File.separator;
-		}
-	}
+	private static final TrueTypeFont defaultFont = new TrueTypeFont(new Font("Calibri", Font.PLAIN, 20), true);
 	
 	private Helper(){
-		
+		//Not to be instantiated
 	}
 	
 	public static double round(double d, int digits){
 		return Math.round(d * Math.pow(10, digits)) / Math.pow(10, digits);
 	}
 	
-	public static Font getDefaultFont(){
-		return new Font("Calibri", Font.PLAIN, 20);
+	public static TrueTypeFont getDefaultFont(){
+		return defaultFont;
 	}
 	
 	public static Color getDefaultForegroundColor(){

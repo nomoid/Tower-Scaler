@@ -1,9 +1,9 @@
 package com.github.assisstion.towerScaler.entity;
 
-import com.github.assisstion.towerScaler.Helper;
+import java.io.File;
 
 public class Player extends GravitationalEntity{
 	public Player(){
-		super(100, 500, Helper.javaroot + "resources/block.png");
+		super(100, 500, "resources" + File.separator + "block.png");
 	}
 }

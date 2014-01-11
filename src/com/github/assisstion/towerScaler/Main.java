@@ -1,6 +1,11 @@
-package com.github.assisstion.towerScaler; 
+package com.github.assisstion.towerScaler;
+
+import java.io.File;
 
 import org.newdawn.slick.AppGameContainer;
+
+import com.github.assisstion.towerScaler.engine.MainEngine;
+import com.github.assisstion.towerScaler.media.AudioHelper;
 
 /*
  * Platformer (Tower Scaler)
@@ -11,6 +16,23 @@ import org.newdawn.slick.AppGameContainer;
  * (See License at EOF)
  * 
  * Version History:
+ * 
+ * Pre-Alpha 0.2.0.0 (2013-01-11)
+ *   Github launch
+ *   Added license
+ *   Added audio system
+ *     Currently using song: Revolution by LunacyEcho
+ *   Added game over menu
+ *   Improved performance
+ *   Sorted files
+ *     Moved files to individual packages
+ *   Code cleanup
+ *   Other changes
+ *     High score checking
+ *     Last used name saving
+ *     TSComponent parent hierarchy
+ *   Other minor fixes
+ *   
  * 
  * Pre-Alpha 0.1.3.1 (2013-12-31)
  *   Added high score saving
@@ -78,11 +100,11 @@ import org.newdawn.slick.AppGameContainer;
  * 
  */
 
-@Version(value = "Pre-Alpha 0.1.3.1", lastUpdate = "2013-12-31")
+@Version(value = "Pre-Alpha 0.2.0.0", lastUpdate = "2014-01-11")
 public final class Main{
 	
 	private Main(){
-		//Not to be initialized
+		//Not to be instantiated
 	}
 	
 	private static final int gameFrameWidth = 960;
@@ -93,12 +115,12 @@ public final class Main{
 		try{
 			AppGameContainer app = new AppGameContainer(new MainEngine());
 			app.setDisplayMode(gameFrameWidth, gameFrameHeight, false);
-			//app.setShowFPS(false);
 			app.setMinimumLogicUpdateInterval(20);
 			app.setMaximumLogicUpdateInterval(20);
 			app.setTargetFrameRate(50);
 			app.setAlwaysRender(true);
 			app.setUpdateOnlyWhenVisible(false);
+			AudioHelper.loopSound("resources" + File.separator + "Revolution by LunacyEcho.wav");
 			if(debug){
 				System.out.println("App started!");
 			}
@@ -116,6 +138,35 @@ public final class Main{
 	public static int getGameFrameHeight(){
 		return gameFrameHeight;
 	}
+	
+	/*
+	 * License
+	 * All parts of this software, unless otherwise noted, is licensed under the MIT license.
+	 * 
+	 * See <http://opensource.org/licenses/MIT> for more details.
+	 * 
+	 * The MIT License (MIT)
+	 *
+	 * Copyright (c) 2013-2014 Markus Feng
+	 * 
+	 * Permission is hereby granted, free of charge, to any person obtaining a copy
+	 * of this software and associated documentation files (the "Software"), to deal
+	 * in the Software without restriction, including without limitation the rights
+	 * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	 * copies of the Software, and to permit persons to whom the Software is
+	 * furnished to do so, subject to the following conditions:
+	 * 
+	 * The above copyright notice and this permission notice shall be included in
+	 * all copies or substantial portions of the Software.
+	 * 
+	 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	 * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	 * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+	 * THE SOFTWARE.
+	 */
 	
 	/*
 	 * Slick2D license

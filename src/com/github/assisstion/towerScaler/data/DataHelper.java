@@ -12,8 +12,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 public final class DataHelper{
+	
 	private DataHelper(){
-		
+		//Not to be instantiated
 	}
 	
 	public static boolean writeObjects(File output, OutputStream os, 

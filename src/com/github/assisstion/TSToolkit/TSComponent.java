@@ -9,9 +9,13 @@ import org.newdawn.slick.gui.GUIContext;
 import com.github.assisstion.towerScaler.box.BoxImpl;
 import com.github.assisstion.towerScaler.box.MutableBoxable;
 
-public abstract class TSComponent extends AbstractComponent implements TSRenderableObject{
+public abstract class TSComponent extends AbstractComponent implements TSScreenObject, TSMouseFocusable{
 	
 	protected MutableBoxable location;
+	protected GUIContext context;
+	protected boolean focus;
+	protected TSComponent parent;
+	protected TSComponent instance = this;
 
 	public TSComponent(GUIContext container){
 		this(container, 0, 0);
@@ -23,9 +27,13 @@ public abstract class TSComponent extends AbstractComponent implements TSRendera
 	
 	public TSComponent(GUIContext container, int x1, int y1, int x2, int y2){
 		super(container);
+		context = container;
 		location = new BoxImpl(x1, x2, y1, y2);
 	}
 
+	public GUIContext getContext(){
+		return context;
+	}
 
 	@Override
 	public int getHeight(){
@@ -35,6 +43,28 @@ public abstract class TSComponent extends AbstractComponent implements TSRendera
 	@Override
 	public int getWidth(){
 		return (int)(location.getX2() - location.getX1());
+	}
+	
+	@Override
+	public int getRealX(){
+		TSComponent parent = getParent();
+		if(parent == null){
+			return getX();
+		}
+		else{
+			return getParent().getRealX() + getX();
+		}
+	}
+
+	@Override
+	public int getRealY(){
+		TSComponent parent = getParent();
+		if(parent == null){
+			return getY();
+		}
+		else{
+			return getParent().getRealY() + getY();
+		}
 	}
 
 	@Override
@@ -68,6 +98,27 @@ public abstract class TSComponent extends AbstractComponent implements TSRendera
 	}
 
 	@Override
+	public boolean hasInputFocus(){
+		return focus;
+	}
+	
+	@Override
+	public void setInputFocus(boolean focus){
+		this.focus = focus;
+	}
+
+	
+	@Override
+	public TSBoxable getRealLocation(){
+		return new RealLocation();
+	}
+	
+	@Override
+	public MutableBoxable getLocation(){
+		return location;
+	}
+
+	@Override
 	public void setLocation(int x, int y){
 		if(location != null){
 			location.setPos(x, x + location.getX2() - location.getX1(), y, y + location.getY2() - location.getX1());
@@ -81,4 +132,36 @@ public abstract class TSComponent extends AbstractComponent implements TSRendera
 	
 	@Override
 	public abstract void render(GameContainer gc, Graphics g, int x, int y) throws SlickException;
+
+	public TSComponent getParent(){
+		return parent;
+	}
+	
+	public void setParent(TSComponent parent){
+		this.parent = parent;
+	}
+	
+	protected class RealLocation implements TSBoxable{
+
+		@Override
+		public double getX1(){
+			return getRealX();
+		}
+
+		@Override
+		public double getX2(){
+			return getRealX() + instance.getX2() - instance.getX1();
+		}
+
+		@Override
+		public double getY1(){
+			return getRealY();
+		}
+
+		@Override
+		public double getY2(){
+			return getRealY() + instance.getY2() - instance.getY1();
+		}
+		
+	}
 }

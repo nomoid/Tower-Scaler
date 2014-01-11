@@ -5,7 +5,6 @@ import org.newdawn.slick.Font;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.gui.GUIContext;
 
 import com.github.assisstion.towerScaler.Helper;
@@ -30,7 +29,7 @@ public class TSFocusTextButton extends TSFocusButton{
 	}
 	
 	public TSFocusTextButton(GUIContext container, TSMouseFocusable parent, int x, int y, String text){
-		this(container, parent, x, y, text, new TrueTypeFont(Helper.getDefaultFont(), true));
+		this(container, parent, x, y, text, Helper.getDefaultFont());
 	}
 	
 	public TSFocusTextButton(GUIContext container, TSMouseFocusable parent, int x, int y, String text, Font font){
@@ -86,6 +85,15 @@ public class TSFocusTextButton extends TSFocusButton{
 	}
 	
 	@Override
+	public int getX(){
+		return (int) getX1();
+	}
+	
+	public int getOriginalX(){
+		return (int) super.getX1();
+	}
+	
+	@Override
 	public double getX1(){
 		return getTextX() - getBorderPadding();
 	}
@@ -98,18 +106,23 @@ public class TSFocusTextButton extends TSFocusButton{
 	public int getTextX(){
 		switch(getAlignX()){
 			case -1:
-				return getRealX();
+				return getOriginalX();
 			case 0:
-				return getRealX() - (getTextWidth() / 2);
+				return getOriginalX() - (getTextWidth() / 2);
 			case 1:
-				return getRealX() - getTextWidth();
+				return getOriginalX() - getTextWidth();
 			default:
-				return getRealX();
+				return getOriginalX();
 		}
 	}
 	
-	public int getRealX(){
-		return (int) super.getX1();
+	@Override
+	public int getY(){
+		return (int) getY1();
+	}
+	
+	public int getOriginalY(){
+		return (int) super.getY1();
 	}
 	
 	@Override
@@ -125,20 +138,16 @@ public class TSFocusTextButton extends TSFocusButton{
 	public int getTextY(){
 		switch(getAlignY()){
 			case -1:
-				return getRealY();
+				return getOriginalY();
 			case 0:
-				return getRealY() - (getTextHeight() / 2);
+				return getOriginalY() - (getTextHeight() / 2);
 			case 1:
-				return getRealY() - getTextHeight();
+				return getOriginalY() - getTextHeight();
 			default:
-				return getRealY();
+				return getOriginalY();
 		}
 	}
-	
-	public int getRealY(){
-		return (int) super.getY1();
-	}
-	
+
 	public Font getFont(){
 		return font;
 	}
