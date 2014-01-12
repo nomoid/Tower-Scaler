@@ -15,6 +15,7 @@ public class TSSingleContainerWindowMenu extends TSWindowMenu{
 	
 	protected TSComponent component;
 	protected TSSingleContainerWindowMenu instance;
+	protected boolean previousInputFocus;
 	
 	public TSSingleContainerWindowMenu(TSColoredBox tscb, TSComponent component){
 		this(component.getContext(), component.getX(), component.getY(), 
@@ -80,13 +81,17 @@ public class TSSingleContainerWindowMenu extends TSWindowMenu{
 				((TSCloseable) component).addCloseListener(new CloseListener(component));
 			}
 		}
+		previousInputFocus = component.hasInputFocus();
+		component.setInputFocus(hasInputFocus());
 		component.setParent(this);
 	}
 
 	public void removeComponent(){
 		if(component != null){
 			component.setParent(null);
+			component.setInputFocus(previousInputFocus);
 		}
+		previousInputFocus = false;
 		this.component = null;
 	}
 	

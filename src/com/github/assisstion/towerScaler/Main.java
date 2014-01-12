@@ -17,6 +17,9 @@ import com.github.assisstion.towerScaler.media.AudioHelper;
  * 
  * Version History:
  * 
+ * Pre-Alpha 0.2.0.1 (2013-01-12)
+ *   Minor mouse focus fix
+ * 
  * Pre-Alpha 0.2.0.0 (2013-01-11)
  *   Github launch
  *   Added license
@@ -100,7 +103,7 @@ import com.github.assisstion.towerScaler.media.AudioHelper;
  * 
  */
 
-@Version(value = "Pre-Alpha 0.2.0.0", lastUpdate = "2014-01-11")
+@Version(value = "Pre-Alpha 0.2.0.1", lastUpdate = "2014-01-12")
 public final class Main{
 	
 	private Main(){
