@@ -60,6 +60,7 @@ public class GameEngine extends AbstractEngine{
 	protected boolean finalHashed;
 	//Most recent name submitted score as - stored and retrieved
 	protected String lastUsedName;
+	protected boolean arcadeMode;
 	
 	public GameEngine(MainEngine parent){
 		engine = parent;
@@ -79,33 +80,40 @@ public class GameEngine extends AbstractEngine{
 		collisionObjects = new HashSet<CollisionEntity>();
 		collidables = new HashSet<GravitationalEntity>();
 		safeBoxes = new HashMap<GravitationalEntity, Box>();
-		player = new Player();
+		String playerLocation = arcadeMode ? "Block.png" : "PlayerLargeSprite.png";
+		player = new Player(playerLocation);
 		entities.add(player);
 		collidables.add(player);
-		PlatformBlock pb0 = new PlatformBlock(150, 0);
+		String blockLocation = arcadeMode ? "Block.png" : "ShortBlock.png";
+		PlatformBlock pb0 = new PlatformBlock(150, 0, blockLocation);
 		entities.add(pb0);
 		collisionObjects.add(pb0);
-		PlatformBlock pbn = new PlatformBlock(100, 100);
+		PlatformBlock pbn = new PlatformBlock(100, 100, blockLocation);
 		entities.add(pbn);
 		collisionObjects.add(pbn);
-		PlatformBlock pb1 = new PlatformBlock(150, 200);
+		PlatformBlock pb1 = new PlatformBlock(150, 200, blockLocation);
 		entities.add(pb1);
 		collisionObjects.add(pb1);
-		PlatformBlock pb2 = new PlatformBlock(100, 300);
+		PlatformBlock pb2 = new PlatformBlock(100, 300, blockLocation);
 		entities.add(pb2);
 		collisionObjects.add(pb2);
-		PlatformBlock pb3 = new PlatformBlock(150, 400);
+		PlatformBlock pb3 = new PlatformBlock(150, 400, blockLocation);
 		entities.add(pb3);
 		collisionObjects.add(pb3);
-		PlatformBlock pb4 = new PlatformBlock(100, 500);
+		PlatformBlock pb4 = new PlatformBlock(100, 500, blockLocation);
 		entities.add(pb4);
 		collisionObjects.add(pb4);
-		PlatformBlock pb5 = new PlatformBlock(150, 600);
+		PlatformBlock pb5 = new PlatformBlock(150, 600, blockLocation);
 		entities.add(pb5);
 		collisionObjects.add(pb5);
 		nextUpdateY = 0;
 		nextUpdateX = 100;
-		gameX = player.getX1() - (Main.getGameFrameWidth() / 2);
+		if(arcadeMode){
+			gameX = player.getX1() - (Main.getGameFrameWidth() / 2);
+		}
+		else{
+			gameX = 0;
+		}
 		gameY = 0;
 		paused = false;
 		scrollingEnabled = true;
@@ -236,7 +244,9 @@ public class GameEngine extends AbstractEngine{
 	}
 	
 	protected void upkeepCheck(Input input){
-		gameX = player.getX1() - (Main.getGameFrameWidth() / 2);
+		if(arcadeMode){
+			gameX = player.getX1() - (Main.getGameFrameWidth() / 2);
+		}
 		if(input.isKeyDown(Input.KEY_L)){
 			scrollingEnabled = false;
 			legit = false;
@@ -257,13 +267,14 @@ public class GameEngine extends AbstractEngine{
 		}
 		if(gameY <= nextUpdateY){
 			Set<PlatformBlock> addToEntities = new HashSet<PlatformBlock>();
+			String blockLocation = arcadeMode ? "Block.png" : "LongBlock.png";
 			for(int n = 0; n < 10; n++){
-				PlatformBlock pb0 = new PlatformBlock(nextUpdateX, gameY - 100);
+				PlatformBlock pb0 = new PlatformBlock(nextUpdateX, gameY - 100, blockLocation);
 				/* UNUSED
 				 * Continuous Platform Generation (Currently Disabled)
 				if(Math.random() * 2 < 1){
 					for(int i = 1; i < 10; i++){
-						PlatformBlock pb1 = new PlatformBlock(nextUpdateX - pb0.getHeight() * i, gameY - 100);
+						PlatformBlock pb1 = new PlatformBlock(nextUpdateX - pb0.getHeight() * i, gameY - 100, blockLocation);
 						boolean overlap = false;
 						for(Entity e : addToEntities){
 							if(new BoxImpl(e).overlaps(pb0)){
@@ -283,7 +294,13 @@ public class GameEngine extends AbstractEngine{
 						}
 					}
 				}*/
-				nextUpdateX = nextUpdateX + ((Math.random() - 0.5) * 200);
+				if(arcadeMode){
+					nextUpdateX = nextUpdateX + ((Math.random() - 0.5) * 200);
+				}
+				else{
+					nextUpdateX = (Math.random() * (Main.getGameFrameWidth() - pb0.getWidth()));
+				}
+				
 				boolean overlap = false;
 				for(Entity e : addToEntities){
 					if(new BoxImpl(e).overlaps(pb0)){
@@ -298,8 +315,15 @@ public class GameEngine extends AbstractEngine{
 				else{
 					n--;
 				}
-				if(Math.random() * (n + 1) >= 1){
-					break;
+				if(arcadeMode){
+					if(Math.random() * (n + 1) >= 1){
+						break;
+					}
+				}
+				else{
+					if(Math.random() * (10 - n) >= 9 - n){
+						break; 
+					}
 				}
 			}
 			//Set value to 250 if non-random scrolling is desired
@@ -967,5 +991,9 @@ public class GameEngine extends AbstractEngine{
 	
 	public boolean isLegitHash(){
 		return legitHash;
+	}
+
+	public void setArcadeMode(boolean arcadeMode){
+		this.arcadeMode = arcadeMode;
 	}
 }

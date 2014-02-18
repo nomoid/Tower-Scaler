@@ -309,6 +309,7 @@ public class MainEngine extends BasicGame implements Engine{
 			if(key == Input.KEY_SPACE){
 				if(state.equals("menu")){
 					if(hasInputFocus()){
+						ge.setArcadeMode(true);
 						startGame();
 					}
 				}
@@ -317,6 +318,7 @@ public class MainEngine extends BasicGame implements Engine{
 			if(key == Input.KEY_ENTER){
 				if(state.equals("menu")){
 					if(hasInputFocus()){
+						ge.setArcadeMode(false);
 						startGame();
 					}
 				}

@@ -23,6 +23,7 @@ public class MenuEngine extends AbstractEngine{
 	protected MainEngine engine;
 	protected TSFocusTextButton startButton;
 	protected TSFocusTextButton highScoreButton;
+	protected TSFocusTextButton arcadeModeButton;
 	protected TrueTypeFont titleFont;
 	protected TrueTypeFont subtitleFont;
 	
@@ -63,6 +64,7 @@ public class MenuEngine extends AbstractEngine{
 		g.drawString(author, ((Main.getGameFrameWidth() - subtitleFont.getWidth(author)) / 2), 150);
 		startButton.render(gc, g);
 		highScoreButton.render(gc, g);
+		arcadeModeButton.render(gc, g);
 	}
 	
 	protected void render1(GameContainer gc, Graphics g){
@@ -81,6 +83,7 @@ public class MenuEngine extends AbstractEngine{
 		startButton.addListener(new ComponentListener(){
 			@Override
 			public void componentActivated(AbstractComponent source){
+				getParent().ge.setArcadeMode(false);
 				getParent().startGame();
 			}
 		});
@@ -93,6 +96,16 @@ public class MenuEngine extends AbstractEngine{
 				HighScoreMenu hsm = getParent().getHighScoreMenu();
 				hsm.setVisible(true);
 				addMenu(hsm);
+			}
+		});
+		arcadeModeButton = new TSFocusTextButton(gc, this, Main.getGameFrameWidth() / 2, 280,
+				"Arcade Mode", Helper.getDefaultFont(), 
+				Color.black, new Color(150, 255, 150), Color.black);
+		arcadeModeButton.addListener(new ComponentListener(){
+			@Override
+			public void componentActivated(AbstractComponent source){
+				getParent().ge.setArcadeMode(true);
+				getParent().startGame();
 			}
 		});
 	}
