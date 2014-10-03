@@ -12,18 +12,18 @@ import org.newdawn.slick.gui.GUIContext;
 import com.github.assisstion.TSToolkit.TSMultiContainer;
 
 public abstract class TSAbstractMenu extends TSMultiContainer implements TSMenu{
-	
+
 	protected boolean visible;
 	protected Set<ComponentListener> closeListeners = new HashSet<ComponentListener>();
-	
+
 	public TSAbstractMenu(GUIContext container){
 		this(container, 0, 0);
 	}
-	
+
 	public TSAbstractMenu(GUIContext container, int x, int y){
 		this(container, x, y, x, y);
 	}
-	
+
 	public TSAbstractMenu(GUIContext container, int x1, int y1, int x2, int y2){
 		super(container, x1, y1, x2, y2);
 		focus = false;
@@ -33,7 +33,7 @@ public abstract class TSAbstractMenu extends TSMultiContainer implements TSMenu{
 	public void render(GameContainer gc, Graphics g) throws SlickException{
 		render(gc, g, 0);
 	}
-	
+
 	@Override
 	public void close(){
 		setVisible(false);
@@ -41,7 +41,7 @@ public abstract class TSAbstractMenu extends TSMultiContainer implements TSMenu{
 			listener.componentActivated(this);
 		}
 	}
-	
+
 	@Override
 	public void addCloseListener(ComponentListener listener){
 		closeListeners.add(listener);
@@ -50,11 +50,11 @@ public abstract class TSAbstractMenu extends TSMultiContainer implements TSMenu{
 	protected void removeCloseListener(ComponentListener listener){
 		closeListeners.remove(listener);
 	}
-	
+
 	protected Set<ComponentListener> getCloseListeners(){
 		return closeListeners;
 	}
-	
+
 	@Override
 	public boolean isVisible(){
 		return visible;
@@ -65,7 +65,7 @@ public abstract class TSAbstractMenu extends TSMultiContainer implements TSMenu{
 		this.visible = visible;
 		setInputFocus(visible);
 	}
-	
+
 	@Override
 	public boolean isStealingFocus(){
 		return hasInputFocus();

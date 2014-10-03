@@ -9,8 +9,9 @@ import org.newdawn.slick.gui.GUIContext;
 import com.github.assisstion.towerScaler.box.BoxImpl;
 import com.github.assisstion.towerScaler.box.MutableBoxable;
 
-public abstract class TSComponent extends AbstractComponent implements TSScreenObject, TSMouseFocusable{
-	
+public abstract class TSComponent extends AbstractComponent implements
+		TSScreenObject, TSMouseFocusable{
+
 	protected MutableBoxable location;
 	protected GUIContext context;
 	protected boolean focus;
@@ -20,11 +21,11 @@ public abstract class TSComponent extends AbstractComponent implements TSScreenO
 	public TSComponent(GUIContext container){
 		this(container, 0, 0);
 	}
-	
+
 	public TSComponent(GUIContext container, int x, int y){
 		this(container, x, y, x, y);
 	}
-	
+
 	public TSComponent(GUIContext container, int x1, int y1, int x2, int y2){
 		super(container);
 		context = container;
@@ -37,14 +38,14 @@ public abstract class TSComponent extends AbstractComponent implements TSScreenO
 
 	@Override
 	public int getHeight(){
-		return (int)(location.getY2() - location.getY1());
+		return (int) (location.getY2() - location.getY1());
 	}
 
 	@Override
 	public int getWidth(){
-		return (int)(location.getX2() - location.getX1());
+		return (int) (location.getX2() - location.getX1());
 	}
-	
+
 	@Override
 	public int getRealX(){
 		TSComponent parent = getParent();
@@ -69,14 +70,14 @@ public abstract class TSComponent extends AbstractComponent implements TSScreenO
 
 	@Override
 	public int getX(){
-		return (int)(getX1());
+		return (int) (getX1());
 	}
-	
+
 	@Override
 	public double getX1(){
 		return location.getX1();
 	}
-	
+
 	@Override
 	public double getX2(){
 		return location.getX2();
@@ -84,14 +85,14 @@ public abstract class TSComponent extends AbstractComponent implements TSScreenO
 
 	@Override
 	public int getY(){
-		return (int)(getY1());
+		return (int) (getY1());
 	}
-	
+
 	@Override
 	public double getY1(){
 		return location.getY1();
 	}
-	
+
 	@Override
 	public double getY2(){
 		return location.getY2();
@@ -101,18 +102,17 @@ public abstract class TSComponent extends AbstractComponent implements TSScreenO
 	public boolean hasInputFocus(){
 		return focus;
 	}
-	
+
 	@Override
 	public void setInputFocus(boolean focus){
 		this.focus = focus;
 	}
 
-	
 	@Override
 	public TSBoxable getRealLocation(){
 		return new RealLocation();
 	}
-	
+
 	@Override
 	public MutableBoxable getLocation(){
 		return location;
@@ -121,26 +121,28 @@ public abstract class TSComponent extends AbstractComponent implements TSScreenO
 	@Override
 	public void setLocation(int x, int y){
 		if(location != null){
-			location.setPos(x, x + location.getX2() - location.getX1(), y, y + location.getY2() - location.getX1());
+			location.setPos(x, x + location.getX2() - location.getX1(), y, y +
+					location.getY2() - location.getX1());
 		}
 	}
-	
+
 	@Override
 	public void render(GUIContext container, Graphics g) throws SlickException{
 		render((GameContainer) container, g, 0, 0);
 	}
-	
+
 	@Override
-	public abstract void render(GameContainer gc, Graphics g, int x, int y) throws SlickException;
+	public abstract void render(GameContainer gc, Graphics g, int x, int y)
+			throws SlickException;
 
 	public TSComponent getParent(){
 		return parent;
 	}
-	
+
 	public void setParent(TSComponent parent){
 		this.parent = parent;
 	}
-	
+
 	protected class RealLocation implements TSBoxable{
 
 		@Override
@@ -162,6 +164,6 @@ public abstract class TSComponent extends AbstractComponent implements TSScreenO
 		public double getY2(){
 			return getRealY() + instance.getY2() - instance.getY1();
 		}
-		
+
 	}
 }

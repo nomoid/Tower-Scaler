@@ -7,5 +7,7 @@ import org.newdawn.slick.gui.GUIContext;
 
 public interface TSRenderableObject extends TSObject{
 	void render(GUIContext container, Graphics g) throws SlickException;
-	void render(GameContainer container, Graphics g, int x, int y) throws SlickException;
+
+	void render(GameContainer container, Graphics g, int x, int y)
+			throws SlickException;
 }

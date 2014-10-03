@@ -6,18 +6,18 @@ import com.github.assisstion.towerScaler.box.Box;
 import com.github.assisstion.towerScaler.box.BoxableBox;
 
 public class CollisionEntity extends Entity implements Box{
-	
+
 	protected Box box;
-	
+
 	public CollisionEntity(){
 		box = new BoxableBox(this);
 	}
-	
+
 	public CollisionEntity(double x, double y, Image image){
 		super(x, y, image);
 		box = new BoxableBox(this);
 	}
-	
+
 	public CollisionEntity(double x, double y, String src){
 		super(x, y, src);
 		box = new BoxableBox(this);

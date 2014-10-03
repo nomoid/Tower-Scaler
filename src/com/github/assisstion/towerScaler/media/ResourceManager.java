@@ -14,19 +14,18 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 public final class ResourceManager{
-	
-	private static ConcurrentSkipListMap<String, BufferedImage>
-		loadedImageResources = new ConcurrentSkipListMap<String, BufferedImage>();
-	private static ConcurrentSkipListMap<String, Clip>
-		loadedAudioResources = new ConcurrentSkipListMap<String, Clip>();
+
+	private static ConcurrentSkipListMap<String, BufferedImage> loadedImageResources = new ConcurrentSkipListMap<String, BufferedImage>();
+	private static ConcurrentSkipListMap<String, Clip> loadedAudioResources = new ConcurrentSkipListMap<String, Clip>();
 	private static boolean muted = false;
 	private static ConcurrentSkipListSet<AudioPlayable> audioPlayers = new ConcurrentSkipListSet<AudioPlayable>();
-	
+
 	private ResourceManager(){
-		//Not to be instantiated
+		// Not to be instantiated
 	}
-	
-	public static BufferedImage getImageResource(String location) throws IOException{
+
+	public static BufferedImage getImageResource(String location)
+			throws IOException{
 		BufferedImage image;
 		if(loadedImageResources.containsKey(location)){
 			image = loadedImageResources.get(location);
@@ -37,8 +36,9 @@ public final class ResourceManager{
 		}
 		return image;
 	}
-	
-	public static Clip getAudioResource(String location) throws IOException, LineUnavailableException, UnsupportedAudioFileException{
+
+	public static Clip getAudioResource(String location) throws IOException,
+			LineUnavailableException, UnsupportedAudioFileException{
 		Clip audio;
 		if(loadedImageResources.containsKey(location)){
 			audio = loadedAudioResources.get(location);
@@ -50,7 +50,7 @@ public final class ResourceManager{
 		}
 		return audio;
 	}
-	
+
 	public synchronized static void setMuted(boolean b){
 		if(muted && !b){
 			for(AudioPlayable ap : audioPlayers){
@@ -64,7 +64,7 @@ public final class ResourceManager{
 		}
 		muted = b;
 	}
-	
+
 	public static void addAudioPlayer(AudioPlayable ap){
 		audioPlayers.add(ap);
 		if(muted){
@@ -74,13 +74,13 @@ public final class ResourceManager{
 			ap.setPaused(false);
 		}
 	}
-	
+
 	public static void removeAudioPlayer(AudioPlayable ap){
 		audioPlayers.remove(ap);
 	}
-	
+
 	public static boolean getMuted(){
 		return muted;
 	}
-	
+
 }

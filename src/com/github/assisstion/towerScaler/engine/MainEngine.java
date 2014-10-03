@@ -37,7 +37,7 @@ import com.github.assisstion.towerScaler.menu.GameOverMenu;
 import com.github.assisstion.towerScaler.menu.HighScoreMenu;
 
 public class MainEngine extends BasicGame implements Engine{
-	
+
 	protected String state = "main";
 	protected Map<String, String> properties;
 	protected MenuEngine me;
@@ -51,9 +51,10 @@ public class MainEngine extends BasicGame implements Engine{
 	protected Properties preferences = new Properties();
 
 	public MainEngine(){
-		super("Tower Scaler" + 
-				(Main.class.getAnnotation(Version.class) == null ? "" : 
-				(" - Version " + Main.class.getAnnotation(Version.class).value())));
+		super("Tower Scaler" +
+				(Main.class.getAnnotation(Version.class) == null ? ""
+						: (" - Version " + Main.class.getAnnotation(
+								Version.class).value())));
 		ge = new GameEngine(this);
 		me = new MenuEngine(this);
 		properties = new HashMap<String, String>();
@@ -62,8 +63,9 @@ public class MainEngine extends BasicGame implements Engine{
 	}
 
 	@Override
-	public void render(GameContainer gc, Graphics g, int layer) throws SlickException{
-		//Ignore layer
+	public void render(GameContainer gc, Graphics g, int layer)
+			throws SlickException{
+		// Ignore layer
 		render(gc, g);
 	}
 
@@ -72,7 +74,8 @@ public class MainEngine extends BasicGame implements Engine{
 		renderMain(gc, g);
 		Set<Display> renderingDisplays = new HashSet<Display>();
 		for(Engine e : engines){
-			if(e.renderingStates() == null || e.renderingStates().contains(getState())){
+			if(e.renderingStates() == null ||
+					e.renderingStates().contains(getState())){
 				renderingDisplays.add(e);
 			}
 		}
@@ -126,7 +129,7 @@ public class MainEngine extends BasicGame implements Engine{
 			}
 		}
 	}
-	
+
 	public void renderMain(GameContainer gc, Graphics g){
 		if(Main.debug){
 			if(!gc.isShowingFPS()){
@@ -142,11 +145,15 @@ public class MainEngine extends BasicGame implements Engine{
 
 	@Override
 	public void init(GameContainer gc) throws SlickException{
-		hsm = new HighScoreMenu(gc, (Main.getGameFrameWidth() / 4), (Main.getGameFrameHeight() / 4),
-				(Main.getGameFrameWidth() * 3 / 4), (Main.getGameFrameHeight() * 3 / 4));
+		hsm = new HighScoreMenu(gc, (Main.getGameFrameWidth() / 4),
+				(Main.getGameFrameHeight() / 4),
+				(Main.getGameFrameWidth() * 3 / 4),
+				(Main.getGameFrameHeight() * 3 / 4));
 		hsm.init(gc);
-		gom = new GameOverMenu(gc, (Main.getGameFrameWidth() / 4), (Main.getGameFrameHeight() / 4),
-				(Main.getGameFrameWidth() * 3 / 4), (Main.getGameFrameHeight() * 3 / 4), ge);
+		gom = new GameOverMenu(gc, (Main.getGameFrameWidth() / 4),
+				(Main.getGameFrameHeight() / 4),
+				(Main.getGameFrameWidth() * 3 / 4),
+				(Main.getGameFrameHeight() * 3 / 4), ge);
 		gom.init(gc);
 		gom.getButton().addListener(new ComponentListener(){
 
@@ -156,18 +163,18 @@ public class MainEngine extends BasicGame implements Engine{
 				TSSingleContainerWindowMenu tsscwm = getWindowMenu();
 				tsscwm.setComponent(getHighScoreMenu());
 			}
-			
+
 		});
 		tsscwm = new TSSingleContainerWindowMenu(gom, gom);
 		tsscwm.addCloseListener(new ComponentListener(){
-			
+
 			@Override
 			public void componentActivated(AbstractComponent source){
 				ge.paused = false;
 				ge.reset();
 				setState("game");
 			}
-			
+
 		});
 		tsscwm.init(gc);
 		loadData();
@@ -180,9 +187,10 @@ public class MainEngine extends BasicGame implements Engine{
 			File hsFile = new File("data" + File.separator + "highscores.dat");
 			new File(hsFile.getParent()).mkdirs();
 			hsFile.createNewFile();
-			List<? extends Object> list = DataHelper.readObjects(
-					new BufferedInputStream(new SimpleEncryptionInputStream(
-					new FileInputStream(hsFile), (byte)(255))));
+			List<? extends Object> list = DataHelper
+					.readObjects(new BufferedInputStream(
+							new SimpleEncryptionInputStream(
+									new FileInputStream(hsFile), (byte) (255))));
 			if(list == null){
 				throw new IOException();
 			}
@@ -207,7 +215,8 @@ public class MainEngine extends BasicGame implements Engine{
 			}
 		}
 		try{
-			File prefFile = new File("data" + File.separator + "preferences.properties");
+			File prefFile = new File("data" + File.separator +
+					"preferences.properties");
 			new File(prefFile.getParent()).mkdirs();
 			if(prefFile.exists()){
 				preferences.load(new FileInputStream(prefFile));
@@ -236,7 +245,7 @@ public class MainEngine extends BasicGame implements Engine{
 			ge.update(gc, delta);
 		}
 	}
-	
+
 	@Override
 	public void keyReleased(int key, char c){
 		super.keyReleased(key, c);
@@ -244,18 +253,19 @@ public class MainEngine extends BasicGame implements Engine{
 			listener.keyReleased(key, c);
 		}
 	}
-	
+
 	protected void updateHighScore(){
 		if(ge.isLegit()){
 			hsm.getHighScores().addScore(ge.getScore());
 			try{
-				File hsFile = new File("data" + File.separator + "highscores.dat");
+				File hsFile = new File("data" + File.separator +
+						"highscores.dat");
 				new File(hsFile.getParent()).mkdirs();
 				hsFile.createNewFile();
 				DataHelper.writeObjects(hsFile, new BufferedOutputStream(
-						new SimpleEncryptionOutputStream(
-						new FileOutputStream(hsFile), (byte)(255))), 
-						Collections.singletonList(hsm.getHighScores()));
+						new SimpleEncryptionOutputStream(new FileOutputStream(
+								hsFile), (byte) (255))), Collections
+						.singletonList(hsm.getHighScores()));
 			}
 			catch(FileNotFoundException e){
 				if(Main.debug){
@@ -270,10 +280,12 @@ public class MainEngine extends BasicGame implements Engine{
 			ge.lastUsedName = ge.getName();
 			preferences.put("last-used-name", ge.lastUsedName);
 			try{
-				File prefFile = new File("data" + File.separator + "preferences.properties");
+				File prefFile = new File("data" + File.separator +
+						"preferences.properties");
 				new File(prefFile.getParent()).mkdirs();
 				prefFile.createNewFile();
-				preferences.store(new FileOutputStream(prefFile), "Preferences");
+				preferences
+						.store(new FileOutputStream(prefFile), "Preferences");
 			}
 			catch(IOException e){
 				if(Main.debug){
@@ -329,7 +341,7 @@ public class MainEngine extends BasicGame implements Engine{
 			listener.keyPressed(key, c);
 		}
 	}
-	
+
 	@Override
 	public void inputEnded(){
 		super.inputEnded();
@@ -337,7 +349,7 @@ public class MainEngine extends BasicGame implements Engine{
 			listener.inputEnded();
 		}
 	}
-	
+
 	@Override
 	public void inputStarted(){
 		super.inputStarted();
@@ -345,7 +357,7 @@ public class MainEngine extends BasicGame implements Engine{
 			listener.inputStarted();
 		}
 	}
-	
+
 	@Override
 	public void setInput(Input input){
 		super.setInput(input);
@@ -353,15 +365,15 @@ public class MainEngine extends BasicGame implements Engine{
 			listener.setInput(input);
 		}
 	}
-	
+
 	public void addKeyListener(KeyListener listener){
 		keyListeners.add(listener);
 	}
-	
+
 	public void removeKeyListener(KeyListener listener){
 		keyListeners.remove(listener);
 	}
-	
+
 	public Set<KeyListener> getKeyListeners(){
 		return keyListeners;
 	}
@@ -381,7 +393,7 @@ public class MainEngine extends BasicGame implements Engine{
 		return state;
 	}
 
-	//Always returns null
+	// Always returns null
 	@Override
 	public Engine getParent(){
 		return null;
@@ -412,7 +424,7 @@ public class MainEngine extends BasicGame implements Engine{
 		return Collections.singleton(0);
 	}
 
-	//Always returns null
+	// Always returns null
 	@Override
 	public Set<String> renderingStates(){
 		return null;
@@ -451,16 +463,16 @@ public class MainEngine extends BasicGame implements Engine{
 		}
 		return true;
 	}
-	
+
 	@Override
 	public void setInputFocus(boolean focus){
-		//Do nothing
+		// Do nothing
 	}
 
 	public GameOverMenu getGameOverMenu(){
 		return gom;
 	}
-	
+
 	public TSSingleContainerWindowMenu getWindowMenu(){
 		return tsscwm;
 	}

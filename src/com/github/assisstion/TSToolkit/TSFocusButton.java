@@ -9,9 +9,8 @@ import org.newdawn.slick.gui.GUIContext;
 
 import com.github.assisstion.towerScaler.box.BoxHelper;
 
-
 public class TSFocusButton extends TSComponent{
-	
+
 	protected Color boxFillColor;
 	protected Color boxBorderColor;
 	protected TSMouseFocusable parent;
@@ -19,51 +18,54 @@ public class TSFocusButton extends TSComponent{
 	public TSFocusButton(GUIContext container, TSMouseFocusable parent){
 		this(container, parent, 0, 0);
 	}
-	
-	public TSFocusButton(GUIContext container, TSMouseFocusable parent, int x, int y){
+
+	public TSFocusButton(GUIContext container, TSMouseFocusable parent, int x,
+			int y){
 		this(container, parent, x, y, x, y);
 	}
-	
-	public TSFocusButton(GUIContext container, TSMouseFocusable parent, int x1, int y1, int x2, int y2){
+
+	public TSFocusButton(GUIContext container, TSMouseFocusable parent, int x1,
+			int y1, int x2, int y2){
 		this(container, parent, x1, y1, x2, y2, Color.white, Color.black);
 	}
 
-	public TSFocusButton(GUIContext container, TSMouseFocusable parent, int x1, int y1, int x2, int y2, Color boxFillColor, Color boxBorderColor){
+	public TSFocusButton(GUIContext container, TSMouseFocusable parent, int x1,
+			int y1, int x2, int y2, Color boxFillColor, Color boxBorderColor){
 		super(container, x1, y1, x2, y2);
 		this.boxFillColor = boxFillColor;
 		this.boxBorderColor = boxBorderColor;
 		this.parent = parent;
 	}
-	
+
 	@Override
 	public void mouseReleased(int button, int x, int y){
-		/* DEBUG
-		System.out.println("mx: " + x);
-		System.out.println("my: " + y);
-		*/
+		/*
+		 * DEBUG System.out.println("mx: " + x); System.out.println("my: " + y);
+		 */
 		if(getMouseParent().hasInputFocus()){
-			/* DEBUG
-			System.out.println("x: " + getRealLocation().getX1() + "; " + getRealLocation().getX2());
-			System.out.println("y: " + getRealLocation().getY1() + "; " + getRealLocation().getY2());
-			*/
+			/*
+			 * DEBUG System.out.println("x: " + getRealLocation().getX1() + "; "
+			 * + getRealLocation().getX2()); System.out.println("y: " +
+			 * getRealLocation().getY1() + "; " + getRealLocation().getY2());
+			 */
 			if(BoxHelper.pointIn(getRealLocation(), x, y)){
 				notifyListeners();
 			}
 		}
 	}
-	
+
 	public Color getBoxFillColor(){
 		return boxFillColor;
 	}
-	
+
 	public Color getBoxBorderColor(){
 		return boxBorderColor;
 	}
-	
+
 	public TSMouseFocusable getMouseParent(){
 		return parent;
 	}
-	
+
 	public void setParent(TSMouseFocusable parent){
 		this.parent = parent;
 	}

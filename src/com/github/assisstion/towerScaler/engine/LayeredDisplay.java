@@ -8,5 +8,6 @@ import org.newdawn.slick.SlickException;
 
 public interface LayeredDisplay extends Display{
 	void render(GameContainer gc, Graphics g, int layer) throws SlickException;
+
 	Set<Integer> renderableLayers();
 }

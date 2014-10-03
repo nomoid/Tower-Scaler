@@ -13,7 +13,7 @@ import com.github.assisstion.towerScaler.TSToolkit.TSMenu;
 
 //This abstract class relies on the parent instance to do all the work
 public abstract class AbstractEngine implements Engine, KeyListener{
-	
+
 	@Override
 	public void render(GameContainer gc, Graphics g) throws SlickException{
 		render(gc, g, 0);
@@ -63,7 +63,7 @@ public abstract class AbstractEngine implements Engine, KeyListener{
 	public Set<TSMenu> getMenus(){
 		return getParent().getMenus();
 	}
-	
+
 	@Override
 	public void setMenus(Set<TSMenu> menus){
 		getParent().setMenus(menus);
@@ -71,12 +71,12 @@ public abstract class AbstractEngine implements Engine, KeyListener{
 
 	@Override
 	public void inputEnded(){
-		
+
 	}
 
 	@Override
 	public void inputStarted(){
-		
+
 	}
 
 	@Override
@@ -86,16 +86,16 @@ public abstract class AbstractEngine implements Engine, KeyListener{
 
 	@Override
 	public void setInput(Input input){
-		
+
 	}
 
 	@Override
 	public void keyPressed(int key, char c){
-		
+
 	}
 
 	@Override
 	public void keyReleased(int key, char c){
-		
+
 	}
 }

@@ -10,24 +10,25 @@ public class SimpleEncryptionOutputStream extends FilterOutputStream{
 
 	protected Iterable<Byte> encryptor;
 	protected Iterator<Byte> currentIteration;
-	
-	public SimpleEncryptionOutputStream(OutputStream out, Iterable<Byte> encryptor){
+
+	public SimpleEncryptionOutputStream(OutputStream out,
+			Iterable<Byte> encryptor){
 		super(out);
 		this.encryptor = encryptor;
 	}
-	
+
 	public SimpleEncryptionOutputStream(OutputStream out, byte encryptor){
 		this(out, encryptorFromByte(encryptor));
 	}
-	
+
 	protected static Iterable<Byte> encryptorFromByte(byte encryptor){
 		final byte outerEncryptor = encryptor;
 		return new Iterable<Byte>(){
-			
+
 			@Override
 			public Iterator<Byte> iterator(){
 				return new Iterator<Byte>(){
-					
+
 					boolean used = false;
 					byte innerEncryptor = outerEncryptor;
 
@@ -51,10 +52,10 @@ public class SimpleEncryptionOutputStream extends FilterOutputStream{
 					public void remove(){
 						throw new UnsupportedOperationException();
 					}
-					
+
 				};
 			}
-			
+
 		};
 	}
 
@@ -65,7 +66,7 @@ public class SimpleEncryptionOutputStream extends FilterOutputStream{
 		}
 		out.write(b ^ currentIteration.next());
 	}
-	
+
 	@Override
 	public void write(byte[] b) throws IOException{
 		byte[] b2 = new byte[b.length];

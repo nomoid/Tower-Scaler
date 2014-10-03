@@ -10,24 +10,24 @@ public class SimpleEncryptionInputStream extends FilterInputStream{
 
 	protected Iterable<Byte> encryptor;
 	protected Iterator<Byte> currentIteration;
-	
+
 	public SimpleEncryptionInputStream(InputStream in, Iterable<Byte> encryptor){
 		super(in);
 		this.encryptor = encryptor;
 	}
-	
+
 	public SimpleEncryptionInputStream(InputStream in, byte encryptor){
 		this(in, encryptorFromByte(encryptor));
 	}
-	
+
 	protected static Iterable<Byte> encryptorFromByte(byte encryptor){
 		final byte outerEncryptor = encryptor;
 		return new Iterable<Byte>(){
-			
+
 			@Override
 			public Iterator<Byte> iterator(){
 				return new Iterator<Byte>(){
-					
+
 					boolean used = false;
 					byte innerEncryptor = outerEncryptor;
 
@@ -51,10 +51,10 @@ public class SimpleEncryptionInputStream extends FilterInputStream{
 					public void remove(){
 						throw new UnsupportedOperationException();
 					}
-					
+
 				};
 			}
-			
+
 		};
 	}
 
@@ -69,7 +69,7 @@ public class SimpleEncryptionInputStream extends FilterInputStream{
 		}
 		return b;
 	}
-	
+
 	@Override
 	public int read(byte[] b) throws IOException{
 		byte[] b2 = new byte[b.length];
@@ -99,17 +99,17 @@ public class SimpleEncryptionInputStream extends FilterInputStream{
 		}
 		return i;
 	}
-	
+
 	@Override
 	public boolean markSupported(){
 		return false;
 	}
-	
+
 	@Override
 	public void mark(int readLimit){
-		//Do nothing
+		// Do nothing
 	}
-	
+
 	@Override
 	public void reset() throws IOException{
 		throw new IOException();

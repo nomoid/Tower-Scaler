@@ -10,31 +10,32 @@ import org.newdawn.slick.gui.GUIContext;
 import com.github.assisstion.towerScaler.Helper;
 
 public class TSTextLabel extends TSComponent{
-	
+
 	protected Font font;
 	protected String text;
 	protected Color textColor;
 	protected int alignX;
 	protected int alignY;
-	
+
 	public TSTextLabel(GUIContext container, String text){
 		this(container, 0, 0, text);
 	}
-	
+
 	public TSTextLabel(GUIContext container, int x, int y, String text){
 		this(container, x, y, text, Helper.getDefaultFont());
 	}
-	
-	public TSTextLabel(GUIContext container, int x, int y, String text, Font font){
+
+	public TSTextLabel(GUIContext container, int x, int y, String text,
+			Font font){
 		this(container, x, y, text, font, Color.black);
 	}
-	
-	public TSTextLabel(GUIContext container, int x, int y, String text, 
+
+	public TSTextLabel(GUIContext container, int x, int y, String text,
 			Font font, Color textColor){
 		this(container, x, y, text, font, textColor, 0, 0);
 	}
-	
-	public TSTextLabel(GUIContext container, int x, int y, String text, 
+
+	public TSTextLabel(GUIContext container, int x, int y, String text,
 			Font font, Color textColor, int alignX, int alignY){
 		super(container, x, y, 0, 0);
 		this.text = text;
@@ -55,26 +56,25 @@ public class TSTextLabel extends TSComponent{
 		g.setColor(tempColor);
 		g.setFont(tempFont);
 	}
-	
+
 	@Override
 	public int getHeight(){
 		return getTextHeight();
 	}
-	
 
 	public int getTextHeight(){
 		return getFont().getHeight(getText());
 	}
-	
+
 	@Override
 	public int getWidth(){
 		return getTextWidth();
 	}
-	
+
 	public int getTextWidth(){
 		return getFont().getWidth(getText());
 	}
-	
+
 	@Override
 	public double getX1(){
 		return getTextX();
@@ -84,7 +84,7 @@ public class TSTextLabel extends TSComponent{
 	public double getX2(){
 		return getTextX() + getWidth();
 	}
-	
+
 	public int getTextX(){
 		switch(getAlignX()){
 			case -1:
@@ -97,11 +97,11 @@ public class TSTextLabel extends TSComponent{
 				return getRealX();
 		}
 	}
-	
+
 	public int getRealX(){
 		return (int) super.getX1();
 	}
-	
+
 	@Override
 	public double getY1(){
 		return getTextY();
@@ -111,7 +111,7 @@ public class TSTextLabel extends TSComponent{
 	public double getY2(){
 		return getTextY() + getHeight();
 	}
-	
+
 	public int getTextY(){
 		switch(getAlignY()){
 			case -1:
@@ -124,27 +124,27 @@ public class TSTextLabel extends TSComponent{
 				return getRealY();
 		}
 	}
-	
+
 	public int getRealY(){
 		return (int) super.getY1();
 	}
-	
+
 	public Font getFont(){
 		return font;
 	}
-	
+
 	public String getText(){
 		return text;
 	}
-	
+
 	public int getAlignX(){
 		return alignX;
 	}
-	
+
 	public int getAlignY(){
 		return alignY;
 	}
-	
+
 	public Color getTextColor(){
 		return textColor;
 	}

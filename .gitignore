@@ -12,9 +12,14 @@
 .project
 .settings/*
 
+*.jnilib
+
 # Slick Files #
 slick/*
 
 # Data Files #
 build/*
 data/*
+/bin/
+
+*.log

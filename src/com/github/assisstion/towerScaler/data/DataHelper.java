@@ -12,12 +12,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 public final class DataHelper{
-	
+
 	private DataHelper(){
-		//Not to be instantiated
+		// Not to be instantiated
 	}
-	
-	public static boolean writeObjects(File output, OutputStream os, 
+
+	public static boolean writeObjects(File output, OutputStream os,
 			List<? extends Serializable> object){
 		ObjectOutputStream oos = null;
 		try{
@@ -47,7 +47,7 @@ public final class DataHelper{
 			}
 		}
 	}
-	
+
 	public static List<? extends Object> readObjects(InputStream is){
 		ObjectInputStream ois = null;
 		try{

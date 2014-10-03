@@ -4,5 +4,6 @@ import org.newdawn.slick.Color;
 
 public interface TSColoredBox{
 	Color getFillColor();
+
 	Color getBorderColor();
 }

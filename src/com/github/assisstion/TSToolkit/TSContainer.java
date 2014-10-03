@@ -5,7 +5,10 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
 public interface TSContainer extends TSRenderableObject{
-	void renderContainer(GameContainer container, Graphics g, int x, int y) throws SlickException;
+	void renderContainer(GameContainer container, Graphics g, int x, int y)
+			throws SlickException;
+
 	int getContainerX();
+
 	int getContainerY();
 }

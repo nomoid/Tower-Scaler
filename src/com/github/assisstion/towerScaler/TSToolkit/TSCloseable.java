@@ -4,5 +4,6 @@ import org.newdawn.slick.gui.ComponentListener;
 
 public interface TSCloseable{
 	void close();
+
 	void addCloseListener(ComponentListener listener);
 }

@@ -19,22 +19,22 @@ import com.github.assisstion.towerScaler.Main;
 import com.github.assisstion.towerScaler.menu.HighScoreMenu;
 
 public class MenuEngine extends AbstractEngine{
-	
+
 	protected MainEngine engine;
 	protected TSFocusTextButton startButton;
 	protected TSFocusTextButton highScoreButton;
 	protected TSFocusTextButton arcadeModeButton;
 	protected TrueTypeFont titleFont;
 	protected TrueTypeFont subtitleFont;
-	
+
 	public MenuEngine(MainEngine e){
 		engine = e;
 	}
-	
+
 	protected MenuEngine(){
-		
+
 	}
-	
+
 	@Override
 	public void render(GameContainer gc, Graphics g) throws SlickException{
 		render(gc, g, 0);
@@ -52,24 +52,29 @@ public class MenuEngine extends AbstractEngine{
 				break;
 		}
 	}
-	
+
 	protected void render0(GameContainer gc, Graphics g) throws SlickException{
 		g.setBackground(new Color(75, 255, 75));
 		g.setFont(titleFont);
 		g.setColor(Color.black);
 		String title = "Tower Scaler";
-		g.drawString(title, ((Main.getGameFrameWidth() - titleFont.getWidth(title)) / 2), 100);
+		g.drawString(title,
+				((Main.getGameFrameWidth() - titleFont.getWidth(title)) / 2),
+				100);
 		g.setFont(subtitleFont);
 		String author = "by assisstion";
-		g.drawString(author, ((Main.getGameFrameWidth() - subtitleFont.getWidth(author)) / 2), 150);
+		g.drawString(
+				author,
+				((Main.getGameFrameWidth() - subtitleFont.getWidth(author)) / 2),
+				150);
 		startButton.render(gc, g);
 		highScoreButton.render(gc, g);
 		arcadeModeButton.render(gc, g);
 	}
-	
+
 	protected void render1(GameContainer gc, Graphics g){
-		/* UNUSED
-		 * Do nothing (yet)
+		/*
+		 * UNUSED Do nothing (yet)
 		 */
 	}
 
@@ -77,9 +82,10 @@ public class MenuEngine extends AbstractEngine{
 	public void init(GameContainer gc){
 		titleFont = new TrueTypeFont(new Font("Calibri", Font.PLAIN, 40), true);
 		subtitleFont = new TrueTypeFont(new Font("Arial", Font.PLAIN, 20), true);
-		startButton = new TSFocusTextButton(gc, this, Main.getGameFrameWidth() / 2, 200,
-				"Start Game", Helper.getDefaultFont(), 
-				Color.black, new Color(150, 150, 255), Color.black);
+		startButton = new TSFocusTextButton(gc, this,
+				Main.getGameFrameWidth() / 2, 200, "Start Game",
+				Helper.getDefaultFont(), Color.black, new Color(150, 150, 255),
+				Color.black);
 		startButton.addListener(new ComponentListener(){
 			@Override
 			public void componentActivated(AbstractComponent source){
@@ -87,9 +93,10 @@ public class MenuEngine extends AbstractEngine{
 				getParent().startGame();
 			}
 		});
-		highScoreButton = new TSFocusTextButton(gc, this, Main.getGameFrameWidth() / 2, 240,
-				"Highscores", Helper.getDefaultFont(), 
-				Color.black, new Color(255, 150, 150), Color.black);
+		highScoreButton = new TSFocusTextButton(gc, this,
+				Main.getGameFrameWidth() / 2, 240, "Highscores",
+				Helper.getDefaultFont(), Color.black, new Color(255, 150, 150),
+				Color.black);
 		highScoreButton.addListener(new ComponentListener(){
 			@Override
 			public void componentActivated(AbstractComponent source){
@@ -98,9 +105,10 @@ public class MenuEngine extends AbstractEngine{
 				addMenu(hsm);
 			}
 		});
-		arcadeModeButton = new TSFocusTextButton(gc, this, Main.getGameFrameWidth() / 2, 280,
-				"Arcade Mode", Helper.getDefaultFont(), 
-				Color.black, new Color(150, 255, 150), Color.black);
+		arcadeModeButton = new TSFocusTextButton(gc, this,
+				Main.getGameFrameWidth() / 2, 280, "Arcade Mode",
+				Helper.getDefaultFont(), Color.black, new Color(150, 255, 150),
+				Color.black);
 		arcadeModeButton.addListener(new ComponentListener(){
 			@Override
 			public void componentActivated(AbstractComponent source){
@@ -112,7 +120,7 @@ public class MenuEngine extends AbstractEngine{
 
 	@Override
 	public void update(GameContainer gc, int delta){
-		//Do nothing
+		// Do nothing
 	}
 
 	@Override
@@ -126,7 +134,7 @@ public class MenuEngine extends AbstractEngine{
 		Collections.addAll(layers, 0, 1);
 		return layers;
 	}
-	
+
 	@Override
 	public Set<String> renderingStates(){
 		return Collections.singleton("menu");
@@ -136,9 +144,9 @@ public class MenuEngine extends AbstractEngine{
 	public boolean hasInputFocus(){
 		return getParent().hasInputFocus();
 	}
-	
+
 	@Override
 	public void setInputFocus(boolean focus){
-		//Do nothing
+		// Do nothing
 	}
 }

@@ -13,16 +13,19 @@ import com.github.assisstion.TSToolkit.TSBox;
 import com.github.assisstion.TSToolkit.TSColoredBox;
 
 public class TSBoxMenu extends TSAbstractMenu implements TSColoredBox{
-	
-	public TSBoxMenu(GUIContext container, Color boxFillColor, Color boxBorderColor){
+
+	public TSBoxMenu(GUIContext container, Color boxFillColor,
+			Color boxBorderColor){
 		this(container, 0, 0, boxFillColor, boxBorderColor);
 	}
-	
-	public TSBoxMenu(GUIContext container, int x, int y, Color boxFillColor, Color boxBorderColor){
+
+	public TSBoxMenu(GUIContext container, int x, int y, Color boxFillColor,
+			Color boxBorderColor){
 		this(container, x, y, x, y, boxFillColor, boxBorderColor);
 	}
-	
-	public TSBoxMenu(GUIContext container, int x1, int y1, int x2, int y2, Color boxFillColor, Color boxBorderColor){
+
+	public TSBoxMenu(GUIContext container, int x1, int y1, int x2, int y2,
+			Color boxFillColor, Color boxBorderColor){
 		super(container, x1, y1, x2, y2);
 		this.boxFillColor = boxFillColor;
 		this.boxBorderColor = boxBorderColor;
@@ -34,28 +37,26 @@ public class TSBoxMenu extends TSAbstractMenu implements TSColoredBox{
 	protected boolean initialized;
 	protected boolean visible;
 
-	//Subclasses should call super.render()
+	// Subclasses should call super.render()
 	@Override
 	public void render(GameContainer gc, Graphics g, int layer)
 			throws SlickException{
 		render(gc, g);
 	}
-	
+
 	@Override
-	public void render(GameContainer gc, Graphics g)
-			throws SlickException{
+	public void render(GameContainer gc, Graphics g) throws SlickException{
 		render(gc, g, 0, 0);
 	}
 
-	//Subclasses should call super.init()
+	// Subclasses should call super.init()
 	@Override
 	public void init(GameContainer gc) throws SlickException{
 		initialized = true;
-		box = new TSBox(gc, getX(), getY(), 
-				getX() + getWidth(), getY() + getHeight(), 
-				getFillColor(), getBorderColor());
+		box = new TSBox(gc, getX(), getY(), getX() + getWidth(), getY() +
+				getHeight(), getFillColor(), getBorderColor());
 	}
-	
+
 	@Override
 	public Color getFillColor(){
 		return boxFillColor;
@@ -68,7 +69,7 @@ public class TSBoxMenu extends TSAbstractMenu implements TSColoredBox{
 
 	@Override
 	public void update(GameContainer gc, int delta) throws SlickException{
-		
+
 	}
 
 	@Override

@@ -7,9 +7,9 @@ import java.util.LinkedList;
 import java.util.Set;
 
 public class HighScoreTable implements Serializable{
-	
+
 	private static final long serialVersionUID = -4837857492582903032L;
-	
+
 	protected int maxScores = 10;
 	protected LinkedList<Score> scores = new LinkedList<Score>();
 
@@ -39,11 +39,11 @@ public class HighScoreTable implements Serializable{
 			scores.removeLast();
 		}
 	}
-	
+
 	public LinkedList<Score> getScores(){
 		return scores;
 	}
-	
+
 	public void validateScores(){
 		LinkedList<Score> toBeRemoved = new LinkedList<Score>();
 		for(Score score : scores){

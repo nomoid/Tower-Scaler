@@ -1,10 +1,9 @@
 package com.github.assisstion.towerScaler.box;
 
-
 public class BoxableBox implements Box{
-	
+
 	protected MutableBoxable b;
-	
+
 	public BoxableBox(MutableBoxable b){
 		this.b = b;
 	}
@@ -33,7 +32,7 @@ public class BoxableBox implements Box{
 	public void setPos(double x1, double x2, double y1, double y2){
 		b.setPos(x1, x2, y1, y2);
 	}
-	
+
 	@Override
 	public void setPos(MutableBoxable b){
 		this.b.setPos(b);
