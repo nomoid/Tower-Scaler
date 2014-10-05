@@ -34,6 +34,10 @@ public final class AudioHelper{
 		}
 	}
 
+	public static AudioLooper getLooper(){
+		return looper;
+	}
+
 	public static class AudioLooper implements Runnable, Looper{
 
 		private String location;
@@ -122,7 +126,7 @@ public final class AudioHelper{
 			if(tempPaused && !paused){
 				audioLock.lock();
 				try{
-					looperCondition.notify();
+					looperCondition.signal();
 				}
 				finally{
 					audioLock.unlock();
@@ -141,14 +145,14 @@ public final class AudioHelper{
 	public static void streamSound(String location, Looper looper){
 		SoundStreamer ss = new SoundStreamer(location, looper);
 		new Thread(soundStreamerThreads, ss, "SoundStreamer-" + ss.hashCode())
-				.start();
+		.start();
 	}
 
 	// Plays a sound once, without Looper control
 	public static void streamSound(String location){
 		SoundStreamer ss = new SoundStreamer(location);
 		new Thread(soundStreamerThreads, ss, "SoundStreamer-" + ss.hashCode())
-				.start();
+		.start();
 	}
 
 	private static class SoundStreamer implements Runnable{
@@ -162,7 +166,7 @@ public final class AudioHelper{
 
 		public SoundStreamer(String location){
 			this.location = location;
-			this.looper = new Looper(){
+			looper = new Looper(){
 				private boolean paused;
 
 				{

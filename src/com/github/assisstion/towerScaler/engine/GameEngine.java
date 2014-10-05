@@ -25,6 +25,7 @@ import com.github.assisstion.towerScaler.entity.Entity;
 import com.github.assisstion.towerScaler.entity.GravitationalEntity;
 import com.github.assisstion.towerScaler.entity.PlatformBlock;
 import com.github.assisstion.towerScaler.entity.Player;
+import com.github.assisstion.towerScaler.media.AudioHelper;
 
 public class GameEngine extends AbstractEngine{
 
@@ -62,6 +63,9 @@ public class GameEngine extends AbstractEngine{
 	// Most recent name submitted score as - stored and retrieved
 	protected String lastUsedName;
 	protected boolean arcadeMode;
+	protected boolean allowCheats;
+	protected boolean allowPause;
+	protected Random random;
 
 	public GameEngine(MainEngine parent){
 		engine = parent;
@@ -77,6 +81,7 @@ public class GameEngine extends AbstractEngine{
 		initialized = true;
 		hash = 0;
 		hv = 0;
+		random = new Random();
 		entities = new HashSet<Entity>();
 		collisionObjects = new HashSet<CollisionEntity>();
 		collidables = new HashSet<GravitationalEntity>();
@@ -137,7 +142,6 @@ public class GameEngine extends AbstractEngine{
 			legitHash = false;
 		}
 		finalHashed = false;
-		Random random = new Random();
 		hv = (byte) random.nextInt();
 		while(hv % 16 == 0){
 			hv = (byte) random.nextInt();
@@ -145,6 +149,8 @@ public class GameEngine extends AbstractEngine{
 		if(legitHash){
 			hash ^= hv << 23;
 		}
+		allowCheats = true;
+		allowPause = true;
 		gc.getInput().clearControlPressedRecord();
 		gc.getInput().clearKeyPressedRecord();
 		gc.getInput().clearMousePressedRecord();
@@ -250,9 +256,11 @@ public class GameEngine extends AbstractEngine{
 			}
 		}
 		else{
-			if(input.isKeyDown(Input.KEY_P)){
-				paused = true;
-				return false;
+			if(allowPause){
+				if(input.isKeyDown(Input.KEY_P)){
+					paused = true;
+					return false;
+				}
 			}
 		}
 		return true;
@@ -262,14 +270,16 @@ public class GameEngine extends AbstractEngine{
 		if(arcadeMode){
 			gameX = player.getX1() - Main.getGameFrameWidth() / 2;
 		}
-		if(input.isKeyDown(Input.KEY_L)){
-			scrollingEnabled = false;
-			legit = false;
-			legitHash = false;
-			hash = 0;
-		}
-		if(input.isKeyDown(Input.KEY_O)){
-			scrollingEnabled = true;
+		if(allowCheats){
+			if(input.isKeyDown(Input.KEY_L)){
+				scrollingEnabled = false;
+				legit = false;
+				legitHash = false;
+				hash = 0;
+			}
+			if(input.isKeyDown(Input.KEY_O)){
+				scrollingEnabled = true;
+			}
 		}
 		if(scrollingEnabled){
 			int gY = (int) (Helper.round(-gameY, 6) * 100);
@@ -302,10 +312,10 @@ public class GameEngine extends AbstractEngine{
 				 * * (i + 2) >= 1){ break; } } }
 				 */
 				if(arcadeMode){
-					nextUpdateX = nextUpdateX + (Math.random() - 0.5) * 200;
+					nextUpdateX = nextUpdateX + (random.nextDouble() - 0.5) * 200;
 				}
 				else{
-					nextUpdateX = Math.random() *
+					nextUpdateX = random.nextDouble() *
 							(Main.getGameFrameWidth() - pb0.getWidth());
 				}
 
@@ -324,18 +334,18 @@ public class GameEngine extends AbstractEngine{
 					n--;
 				}
 				if(arcadeMode){
-					if(Math.random() * (n + 1) >= 1){
+					if(random.nextDouble() * (n + 1) >= 1){
 						break;
 					}
 				}
 				else{
-					if(Math.random() * (10 - n) >= 9 - n){
+					if(random.nextDouble() * (10 - n) >= 9 - n){
 						break;
 					}
 				}
 			}
 			// Set value to 250 if non-random scrolling is desired
-			nextUpdateX = nextUpdateX + (Math.random() - 0.5) * 200;
+			nextUpdateX = nextUpdateX + (random.nextDouble() - 0.5) * 200;
 			nextUpdateY -= 100;
 		}
 		blockCounter++;
@@ -352,6 +362,9 @@ public class GameEngine extends AbstractEngine{
 		boolean yYes = true;
 		for(GravitationalEntity ge : collidables){
 			for(CollisionEntity ce : collisionObjects){
+				if(ge.equals(ce)){
+					continue;
+				}
 				if(!ge.overlaps(ce)){
 					// Down collision test
 					BoxImpl boxDown = new BoxImpl(ge.getBox());
@@ -513,23 +526,25 @@ public class GameEngine extends AbstractEngine{
 	 * move left Down: move down Right: move right
 	 */
 	protected void inputCheck(Input input, int delta){
-		if(input.isKeyDown(Input.KEY_Z)){
-			Main.debug = true;
-			legit = false;
-			legitHash = false;
-			hash = 0;
-		}
-		if(input.isKeyDown(Input.KEY_X)){
-			Main.debug = false;
-		}
-		if(input.isKeyDown(Input.KEY_N)){
-			noClip = true;
-			legit = false;
-			legitHash = false;
-			hash = 0;
-		}
-		if(input.isKeyDown(Input.KEY_J)){
-			noClip = false;
+		if(allowCheats){
+			if(input.isKeyDown(Input.KEY_Z)){
+				Main.debug = true;
+				legit = false;
+				legitHash = false;
+				hash = 0;
+			}
+			if(input.isKeyDown(Input.KEY_X)){
+				Main.debug = false;
+			}
+			if(input.isKeyDown(Input.KEY_N)){
+				noClip = true;
+				legit = false;
+				legitHash = false;
+				hash = 0;
+			}
+			if(input.isKeyDown(Input.KEY_J)){
+				noClip = false;
+			}
 		}
 		if(input.isKeyDown(Input.KEY_B)){
 			if(Main.debug){
@@ -659,6 +674,9 @@ public class GameEngine extends AbstractEngine{
 			boolean calcN = false;
 			boolean xN = false;
 			for(CollisionEntity ce : collisionObjects){
+				if(ge.equals(ce)){
+					continue;
+				}
 				if(ge.overlaps(ce)){
 					// true for xN, false for yN
 					boolean tempCalcN = false;
@@ -1023,5 +1041,13 @@ public class GameEngine extends AbstractEngine{
 
 	public void setArcadeMode(boolean arcadeMode){
 		this.arcadeMode = arcadeMode;
+	}
+
+	public boolean isSoundOn(){
+		return AudioHelper.getLooper().isPaused();
+	}
+
+	public void setSoundOn(boolean paused){
+		AudioHelper.getLooper().setPaused(paused);
 	}
 }

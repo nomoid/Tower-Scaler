@@ -17,6 +17,7 @@ import com.github.assisstion.TSToolkit.TSFocusTextButton;
 import com.github.assisstion.towerScaler.Helper;
 import com.github.assisstion.towerScaler.Main;
 import com.github.assisstion.towerScaler.menu.HighScoreMenu;
+import com.github.assisstion.towerScaler.menu.OptionsMenu;
 
 public class MenuEngine extends AbstractEngine{
 
@@ -26,6 +27,7 @@ public class MenuEngine extends AbstractEngine{
 	protected TSFocusTextButton arcadeModeButton;
 	protected TrueTypeFont titleFont;
 	protected TrueTypeFont subtitleFont;
+	private TSFocusTextButton optionsButton;
 
 	public MenuEngine(MainEngine e){
 		engine = e;
@@ -69,6 +71,7 @@ public class MenuEngine extends AbstractEngine{
 				150);
 		startButton.render(gc, g);
 		highScoreButton.render(gc, g);
+		optionsButton.render(gc, g);
 		arcadeModeButton.render(gc, g);
 	}
 
@@ -83,7 +86,7 @@ public class MenuEngine extends AbstractEngine{
 		titleFont = new TrueTypeFont(new Font("Calibri", Font.PLAIN, 40), true);
 		subtitleFont = new TrueTypeFont(new Font("Arial", Font.PLAIN, 20), true);
 		startButton = new TSFocusTextButton(gc, this,
-				Main.getGameFrameWidth() / 2, 280, " Special Mode ",
+				Main.getGameFrameWidth() / 2, 240, " Special Mode ",
 				Helper.getDefaultFont(), Color.black, new Color(150, 150, 255),
 				Color.black);
 		startButton.addListener(new ComponentListener(){
@@ -94,7 +97,7 @@ public class MenuEngine extends AbstractEngine{
 			}
 		});
 		highScoreButton = new TSFocusTextButton(gc, this,
-				Main.getGameFrameWidth() / 2, 240, " Highscores ",
+				Main.getGameFrameWidth() / 2, 280, " Highscores ",
 				Helper.getDefaultFont(), Color.black, new Color(255, 150, 150),
 				Color.black);
 		highScoreButton.addListener(new ComponentListener(){
@@ -105,9 +108,21 @@ public class MenuEngine extends AbstractEngine{
 				addMenu(hsm);
 			}
 		});
+		optionsButton = new TSFocusTextButton(gc, this,
+				Main.getGameFrameWidth() / 2, 320, " Options ",
+				Helper.getDefaultFont(), Color.black, new Color(150, 255, 255),
+				Color.black);
+		optionsButton.addListener(new ComponentListener(){
+			@Override
+			public void componentActivated(AbstractComponent source){
+				OptionsMenu hsm = getParent().getOptionsMenu();
+				hsm.setVisible(true);
+				addMenu(hsm);
+			}
+		});
 		arcadeModeButton = new TSFocusTextButton(gc, this,
 				Main.getGameFrameWidth() / 2, 200, " Arcade Mode ",
-				Helper.getDefaultFont(), Color.black, new Color(150, 255, 150),
+				Helper.getDefaultFont(), Color.black, new Color(255, 255, 150),
 				Color.black);
 		arcadeModeButton.addListener(new ComponentListener(){
 			@Override

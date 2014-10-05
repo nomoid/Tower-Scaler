@@ -35,6 +35,7 @@ import com.github.assisstion.towerScaler.data.SimpleEncryptionInputStream;
 import com.github.assisstion.towerScaler.data.SimpleEncryptionOutputStream;
 import com.github.assisstion.towerScaler.menu.GameOverMenu;
 import com.github.assisstion.towerScaler.menu.HighScoreMenu;
+import com.github.assisstion.towerScaler.menu.OptionsMenu;
 
 public class MainEngine extends BasicGame implements Engine{
 
@@ -49,12 +50,13 @@ public class MainEngine extends BasicGame implements Engine{
 	protected TSSingleContainerWindowMenu tsscwm;
 	protected Set<KeyListener> keyListeners = new HashSet<KeyListener>();
 	protected Properties preferences = new Properties();
+	private OptionsMenu opm;
 
 	public MainEngine(){
 		super("Tower Scaler" +
 				(Main.class.getAnnotation(Version.class) == null ? ""
-						: (" - Version " + Main.class.getAnnotation(
-								Version.class).value())));
+						: " - Version " + Main.class.getAnnotation(
+								Version.class).value()));
 		ge = new GameEngine(this);
 		me = new MenuEngine(this);
 		properties = new HashMap<String, String>();
@@ -145,16 +147,21 @@ public class MainEngine extends BasicGame implements Engine{
 
 	@Override
 	public void init(GameContainer gc) throws SlickException{
-		hsm = new HighScoreMenu(gc, (Main.getGameFrameWidth() / 4),
-				(Main.getGameFrameHeight() / 4),
-				(Main.getGameFrameWidth() * 3 / 4),
-				(Main.getGameFrameHeight() * 3 / 4));
+		hsm = new HighScoreMenu(gc, Main.getGameFrameWidth() / 4,
+				Main.getGameFrameHeight() / 4,
+				Main.getGameFrameWidth() * 3 / 4,
+				Main.getGameFrameHeight() * 3 / 4);
 		hsm.init(gc);
-		gom = new GameOverMenu(gc, (Main.getGameFrameWidth() / 4),
-				(Main.getGameFrameHeight() / 4),
-				(Main.getGameFrameWidth() * 3 / 4),
-				(Main.getGameFrameHeight() * 3 / 4), ge);
+		gom = new GameOverMenu(gc, Main.getGameFrameWidth() / 4,
+				Main.getGameFrameHeight() / 4,
+				Main.getGameFrameWidth() * 3 / 4,
+				Main.getGameFrameHeight() * 3 / 4, ge);
 		gom.init(gc);
+		opm = new OptionsMenu(gc, Main.getGameFrameWidth() / 4,
+				Main.getGameFrameHeight() / 4,
+				Main.getGameFrameWidth() * 3 / 4,
+				Main.getGameFrameHeight() * 3 / 4, ge);
+		opm.init(gc);
 		gom.getButton().addListener(new ComponentListener(){
 
 			@Override
@@ -190,7 +197,7 @@ public class MainEngine extends BasicGame implements Engine{
 			List<? extends Object> list = DataHelper
 					.readObjects(new BufferedInputStream(
 							new SimpleEncryptionInputStream(
-									new FileInputStream(hsFile), (byte) (255))));
+									new FileInputStream(hsFile), (byte) 255)));
 			if(list == null){
 				throw new IOException();
 			}
@@ -264,8 +271,8 @@ public class MainEngine extends BasicGame implements Engine{
 				hsFile.createNewFile();
 				DataHelper.writeObjects(hsFile, new BufferedOutputStream(
 						new SimpleEncryptionOutputStream(new FileOutputStream(
-								hsFile), (byte) (255))), Collections
-						.singletonList(hsm.getHighScores()));
+								hsFile), (byte) 255)), Collections
+								.singletonList(hsm.getHighScores()));
 			}
 			catch(FileNotFoundException e){
 				if(Main.debug){
@@ -285,7 +292,7 @@ public class MainEngine extends BasicGame implements Engine{
 				new File(prefFile.getParent()).mkdirs();
 				prefFile.createNewFile();
 				preferences
-						.store(new FileOutputStream(prefFile), "Preferences");
+				.store(new FileOutputStream(prefFile), "Preferences");
 			}
 			catch(IOException e){
 				if(Main.debug){
@@ -475,5 +482,9 @@ public class MainEngine extends BasicGame implements Engine{
 
 	public TSSingleContainerWindowMenu getWindowMenu(){
 		return tsscwm;
+	}
+
+	public OptionsMenu getOptionsMenu(){
+		return opm;
 	}
 }

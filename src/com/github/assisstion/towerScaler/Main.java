@@ -17,6 +17,11 @@ import com.github.assisstion.towerScaler.media.AudioHelper;
  *
  * Version History:
  *
+ * Pre-Alpha 0.2.2.2 (2014-10-05)
+ *   Added options menu
+ *   Semantic changes
+ *   Minor sound fix
+ *
  * Pre-Alpha 0.2.2.1 (2014-10-03)
  *   Stores unlimited high scores
  *     Added previous and next button to highscore menu
@@ -124,7 +129,7 @@ import com.github.assisstion.towerScaler.media.AudioHelper;
  *
  */
 
-@Version(value = "Pre-Alpha 0.2.2.1", lastUpdate = "2014-10-04")
+@Version(value = "Pre-Alpha 0.2.2.2", lastUpdate = "2014-10-05")
 public final class Main{
 
 	private Main(){
@@ -138,7 +143,7 @@ public final class Main{
 	public static void main(String[] args){
 		try{
 			AppGameContainer app = new AppGameContainer(new MainEngine());
-			app.setDisplayMode(gameFrameWidth, gameFrameHeight, false);
+			app.setDisplayMode(gameFrameWidth, gameFrameHeight, true);
 			app.setMinimumLogicUpdateInterval(20);
 			app.setMaximumLogicUpdateInterval(20);
 			app.setTargetFrameRate(50);
