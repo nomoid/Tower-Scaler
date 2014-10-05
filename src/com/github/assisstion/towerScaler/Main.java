@@ -143,7 +143,7 @@ public final class Main{
 	public static void main(String[] args){
 		try{
 			AppGameContainer app = new AppGameContainer(new MainEngine());
-			app.setDisplayMode(gameFrameWidth, gameFrameHeight, true);
+			app.setDisplayMode(gameFrameWidth, gameFrameHeight, false);
 			app.setMinimumLogicUpdateInterval(20);
 			app.setMaximumLogicUpdateInterval(20);
 			app.setTargetFrameRate(50);
