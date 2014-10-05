@@ -59,13 +59,13 @@ public class MenuEngine extends AbstractEngine{
 		g.setColor(Color.black);
 		String title = "Tower Scaler";
 		g.drawString(title,
-				((Main.getGameFrameWidth() - titleFont.getWidth(title)) / 2),
+				(Main.getGameFrameWidth() - titleFont.getWidth(title)) / 2,
 				100);
 		g.setFont(subtitleFont);
 		String author = "by assisstion";
 		g.drawString(
 				author,
-				((Main.getGameFrameWidth() - subtitleFont.getWidth(author)) / 2),
+				(Main.getGameFrameWidth() - subtitleFont.getWidth(author)) / 2,
 				150);
 		startButton.render(gc, g);
 		highScoreButton.render(gc, g);
@@ -83,7 +83,7 @@ public class MenuEngine extends AbstractEngine{
 		titleFont = new TrueTypeFont(new Font("Calibri", Font.PLAIN, 40), true);
 		subtitleFont = new TrueTypeFont(new Font("Arial", Font.PLAIN, 20), true);
 		startButton = new TSFocusTextButton(gc, this,
-				Main.getGameFrameWidth() / 2, 200, "Start Game",
+				Main.getGameFrameWidth() / 2, 280, " Special Mode ",
 				Helper.getDefaultFont(), Color.black, new Color(150, 150, 255),
 				Color.black);
 		startButton.addListener(new ComponentListener(){
@@ -94,7 +94,7 @@ public class MenuEngine extends AbstractEngine{
 			}
 		});
 		highScoreButton = new TSFocusTextButton(gc, this,
-				Main.getGameFrameWidth() / 2, 240, "Highscores",
+				Main.getGameFrameWidth() / 2, 240, " Highscores ",
 				Helper.getDefaultFont(), Color.black, new Color(255, 150, 150),
 				Color.black);
 		highScoreButton.addListener(new ComponentListener(){
@@ -106,7 +106,7 @@ public class MenuEngine extends AbstractEngine{
 			}
 		});
 		arcadeModeButton = new TSFocusTextButton(gc, this,
-				Main.getGameFrameWidth() / 2, 280, "Arcade Mode",
+				Main.getGameFrameWidth() / 2, 200, " Arcade Mode ",
 				Helper.getDefaultFont(), Color.black, new Color(150, 255, 150),
 				Color.black);
 		arcadeModeButton.addListener(new ComponentListener(){

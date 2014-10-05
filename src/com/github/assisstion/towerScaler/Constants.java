@@ -18,6 +18,7 @@ public final class Constants{
 	public static final double airSlowdown = 0.012;
 	public static final double scrollSpeedFactor = 1000;
 	public static final double scrollMax = 4.2;
+	public static final int scoresDisplayed = 10;
 
 	private Constants(){
 

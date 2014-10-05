@@ -17,6 +17,11 @@ import com.github.assisstion.towerScaler.media.AudioHelper;
  *
  * Version History:
  *
+ * Pre-Alpha 0.2.2.1 (2014-10-03)
+ *   Stores unlimited high scores
+ *     Added previous and next button to highscore menu
+ *   Made boxed labels wider
+ *
  * Pre-Alpha 0.2.2.0 (2014-10-03)
  *   Formatted Code
  *   Changed arcade mode player block color
@@ -119,7 +124,7 @@ import com.github.assisstion.towerScaler.media.AudioHelper;
  *
  */
 
-@Version(value = "Pre-Alpha 0.2.2.0", lastUpdate = "2014-10-03")
+@Version(value = "Pre-Alpha 0.2.2.1", lastUpdate = "2014-10-04")
 public final class Main{
 
 	private Main(){

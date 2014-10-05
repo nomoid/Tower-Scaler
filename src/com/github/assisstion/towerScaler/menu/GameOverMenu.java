@@ -28,10 +28,10 @@ public class GameOverMenu extends TSWindowMenu{
 	public void init(GameContainer gc) throws SlickException{
 		super.init(gc);
 		TSTextLabel label = new TSTextLabel(gc, getWidth() / 2,
-				getHeight() / 8, "Game Over");
+				getHeight() / 8, " Game Over ");
 		TSBoxLabel box = new TSBoxLabel(gc, label, Color.green, Color.black);
 		tsftb = new TSFocusTextButton(gc, this, getWidth() / 2,
-				getHeight() * 3 / 5, "Submit Score", Helper.getDefaultFont(),
+				getHeight() * 3 / 5, " Submit Score ", Helper.getDefaultFont(),
 				Color.cyan, Color.black, Color.black);
 		addComponent(box);
 		addComponent(tsftb);

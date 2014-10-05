@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 public class HighScoreTable implements Serializable{
@@ -25,23 +26,33 @@ public class HighScoreTable implements Serializable{
 				break;
 			}
 			index++;
-			if(index >= maxScores){
+			/*if(index >= maxScores){
 				break;
-			}
+			}*/
 		}
-		if(index < maxScores){
-			add = true;
-		}
+		//if(index < maxScores){
+		add = true;
+		//}
 		if(add){
 			scores.add(index, score);
 		}
-		while(scores.size() > maxScores){
+		/*while(scores.size() > maxScores){
 			scores.removeLast();
-		}
+		}*/
 	}
 
-	public LinkedList<Score> getScores(){
+	public List<Score> getScores(){
 		return scores;
+	}
+
+	public List<Score> getScores(int start, int end){
+		if(start > scores.size() - 1){
+			start = scores.size() - 1;
+		}
+		if(end > scores.size()){
+			end = scores.size();
+		}
+		return scores.subList(start, end);
 	}
 
 	public void validateScores(){
