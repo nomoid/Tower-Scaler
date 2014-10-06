@@ -966,16 +966,6 @@ public class GameEngine extends AbstractEngine{
 					setState("game");
 					return;
 				}
-				else if(key == Input.KEY_RIGHT){
-					getParent().getHighScoreMenu().setIndex(
-							getParent().getHighScoreMenu().getIndex() + 10);
-					return;
-				}
-				else if(key == Input.KEY_LEFT){
-					getParent().getHighScoreMenu().setIndex(
-							getParent().getHighScoreMenu().getIndex() - 10);
-					return;
-				}
 			}
 		}
 		else if(key == Input.KEY_SPACE || key == Input.KEY_ENTER){

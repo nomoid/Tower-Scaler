@@ -343,6 +343,18 @@ public class MainEngine extends BasicGame implements Engine{
 				}
 				break listen;
 			}
+			if(getHighScoreMenu().hasInputFocus()){
+				if(key == Input.KEY_RIGHT){
+					getHighScoreMenu().setIndex(
+							getHighScoreMenu().getIndex() + 10);
+					break listen;
+				}
+				if(key == Input.KEY_LEFT){
+					getHighScoreMenu().setIndex(
+							getHighScoreMenu().getIndex() - 10);
+					break listen;
+				}
+			}
 		}
 		for(KeyListener listener : keyListeners){
 			listener.keyPressed(key, c);

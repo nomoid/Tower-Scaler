@@ -17,6 +17,11 @@ import com.github.assisstion.towerScaler.media.AudioHelper;
  *
  * Version History:
  *
+ * Pre-Alpha 0.2.2.3 (2014-10-06)
+ *   Changed compiler compliance to 1.7
+ *   Added fullscreen support
+ *   Minor keyboard fix
+ *
  * Pre-Alpha 0.2.2.2 (2014-10-05)
  *   Added options menu
  *   Semantic changes
@@ -129,21 +134,26 @@ import com.github.assisstion.towerScaler.media.AudioHelper;
  *
  */
 
-@Version(value = "Pre-Alpha 0.2.2.2", lastUpdate = "2014-10-05")
+@Version(value = "Pre-Alpha 0.2.2.3", lastUpdate = "2014-10-06")
 public final class Main{
 
 	private Main(){
 		// Not to be instantiated
 	}
 
-	private static final int gameFrameWidth = 960;
-	private static final int gameFrameHeight = 640;
+	private static int gameFrameWidth = 960;
+	private static int gameFrameHeight = 640;
 	public static boolean debug = false;
+	private static final boolean fullScreen = false;
 
 	public static void main(String[] args){
 		try{
 			AppGameContainer app = new AppGameContainer(new MainEngine());
-			app.setDisplayMode(gameFrameWidth, gameFrameHeight, false);
+			if(fullScreen){
+				gameFrameWidth = app.getScreenWidth();
+				gameFrameHeight = app.getScreenHeight();
+			}
+			app.setDisplayMode(gameFrameWidth, gameFrameHeight, fullScreen);
 			app.setMinimumLogicUpdateInterval(20);
 			app.setMaximumLogicUpdateInterval(20);
 			app.setTargetFrameRate(50);
@@ -219,8 +229,8 @@ public final class Main{
 	 * be used to endorse or promote products derived from this software without
 	 * specific prior written permission.
 	 *
-	 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS �AS
-	 * IS� AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+	 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+	 * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 	 * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
 	 * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
 	 * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
