@@ -17,6 +17,9 @@ import com.github.assisstion.towerScaler.media.AudioHelper;
  *
  * Version History:
  *
+ * Pre-Alpha 0.2.2.4 (2014-10-10)
+ *   Changed state-based system to "Active Engine" based system
+ *
  * Pre-Alpha 0.2.2.3 (2014-10-06)
  *   Changed compiler compliance to 1.7
  *   Added fullscreen support
@@ -134,7 +137,7 @@ import com.github.assisstion.towerScaler.media.AudioHelper;
  *
  */
 
-@Version(value = "Pre-Alpha 0.2.2.3", lastUpdate = "2014-10-06")
+@Version(value = "Pre-Alpha 0.2.2.4", lastUpdate = "2014-10-10")
 public final class Main{
 
 	private Main(){

@@ -151,11 +151,6 @@ public class MenuEngine extends AbstractEngine{
 	}
 
 	@Override
-	public Set<String> renderingStates(){
-		return Collections.singleton("menu");
-	}
-
-	@Override
 	public boolean hasInputFocus(){
 		return getParent().hasInputFocus();
 	}
@@ -163,5 +158,10 @@ public class MenuEngine extends AbstractEngine{
 	@Override
 	public void setInputFocus(boolean focus){
 		// Do nothing
+	}
+
+	@Override
+	public boolean isActive(){
+		return getParent().getActiveEngines().contains(this);
 	}
 }

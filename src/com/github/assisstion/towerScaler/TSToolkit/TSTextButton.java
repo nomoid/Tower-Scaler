@@ -29,34 +29,34 @@ public class TSTextButton extends TSComponent{
 	protected int alignX;
 	protected int alignY;
 	protected Engine parent;
-	protected String onState;
+	protected TSBooleanSupplier onState;
 	protected String onPropertyKey;
 	protected String onPropertyValue;
 
-	public TSTextButton(GUIContext container, Engine parent, String onState,
+	public TSTextButton(GUIContext container, Engine parent, TSBooleanSupplier onState,
 			String text){
 		this(container, parent, onState, 0, 0, text);
 	}
 
-	public TSTextButton(GUIContext container, Engine parent, String onState,
+	public TSTextButton(GUIContext container, Engine parent, TSBooleanSupplier onState,
 			int x, int y, String text){
 		this(container, parent, onState, x, y, text, Helper.getDefaultFont());
 	}
 
-	public TSTextButton(GUIContext container, Engine parent, String onState,
+	public TSTextButton(GUIContext container, Engine parent, TSBooleanSupplier onState,
 			int x, int y, String text, Font font){
 		this(container, parent, onState, x, y, text, font, Color.black,
 				Color.white, Color.black);
 	}
 
-	public TSTextButton(GUIContext container, Engine parent, String onState,
+	public TSTextButton(GUIContext container, Engine parent, TSBooleanSupplier onState,
 			int x, int y, String text, Font font, Color textColor,
 			Color boxFillColor, Color boxBorderColor){
 		this(container, parent, onState, x, y, text, font, textColor,
 				boxFillColor, boxBorderColor, 2, 0, 0);
 	}
 
-	public TSTextButton(GUIContext container, Engine parent, String onState,
+	public TSTextButton(GUIContext container, Engine parent, TSBooleanSupplier onState,
 			int x, int y, String text, Font font, Color textColor,
 			Color boxFillColor, Color boxBorderColor, int padding, int alignX,
 			int alignY){
@@ -66,7 +66,7 @@ public class TSTextButton extends TSComponent{
 		this.textColor = textColor;
 		this.boxFillColor = boxFillColor;
 		this.boxBorderColor = boxBorderColor;
-		this.borderPadding = padding;
+		borderPadding = padding;
 		this.alignX = alignX;
 		this.alignY = alignY;
 		this.parent = parent;
@@ -106,7 +106,7 @@ public class TSTextButton extends TSComponent{
 			case -1:
 				return getRealX();
 			case 0:
-				return getRealX() - (getTextWidth() / 2);
+				return getRealX() - getTextWidth() / 2;
 			case 1:
 				return getRealX() - getTextWidth();
 			default:
@@ -114,6 +114,7 @@ public class TSTextButton extends TSComponent{
 		}
 	}
 
+	@Override
 	public int getRealX(){
 		return (int) super.getX1();
 	}
@@ -133,7 +134,7 @@ public class TSTextButton extends TSComponent{
 			case -1:
 				return getRealY();
 			case 0:
-				return getRealY() - (getTextHeight() / 2);
+				return getRealY() - getTextHeight() / 2;
 			case 1:
 				return getRealY() - getTextHeight();
 			default:
@@ -144,17 +145,18 @@ public class TSTextButton extends TSComponent{
 	@Override
 	public void mouseReleased(int button, int x, int y){
 		if(getEngineParent() == null ||
-				((getOnState() == null || getEngineParent().getState().equals(
-						getOnState())) && (getOnPropertyKey() == null ||
-						getOnPropertyValue() == null || getEngineParent()
-						.getEngineProperty(getOnPropertyKey()).equals(
-								getOnPropertyValue())))){
+				(getOnState() == null || getOnState().get())
+				&& (getOnPropertyKey() == null ||
+				getOnPropertyValue() == null || getEngineParent()
+				.getEngineProperty(getOnPropertyKey()).equals(
+						getOnPropertyValue()))){
 			if(BoxHelper.pointIn(this, x, y)){
 				notifyListeners();
 			}
 		}
 	}
 
+	@Override
 	public int getRealY(){
 		return (int) super.getY1();
 	}
@@ -199,11 +201,11 @@ public class TSTextButton extends TSComponent{
 		this.parent = parent;
 	}
 
-	public void setOnState(String state){
-		onState = state;
+	public void setOnState(TSBooleanSupplier supplier){
+		onState = supplier;
 	}
 
-	public String getOnState(){
+	public TSBooleanSupplier getOnState(){
 		return onState;
 	}
 

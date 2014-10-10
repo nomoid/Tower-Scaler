@@ -65,7 +65,10 @@ public class GameEngine extends AbstractEngine{
 	protected boolean arcadeMode;
 	protected boolean allowCheats;
 	protected boolean allowPause;
+	// Game level RNG
 	protected Random random;
+	// If the game is over
+	protected boolean gameOver;
 
 	public GameEngine(MainEngine parent){
 		engine = parent;
@@ -151,6 +154,7 @@ public class GameEngine extends AbstractEngine{
 		}
 		allowCheats = true;
 		allowPause = true;
+		gameOver = false;
 		gc.getInput().clearControlPressedRecord();
 		gc.getInput().clearKeyPressedRecord();
 		gc.getInput().clearMousePressedRecord();
@@ -189,7 +193,7 @@ public class GameEngine extends AbstractEngine{
 		g.setColor(Color.white);
 		g.drawString("Score: " + Helper.round(-gameY, 2), 10, 30);
 		if(Main.debug){
-			if(!getState().equals("game_over")){
+			if(!gameOver){
 				g.drawString("(" + aboveBlock + ", " + belowBlock + ", " +
 						leftOfBlock + ", " + rightOfBlock + ")", 10, 90);
 			}
@@ -199,13 +203,13 @@ public class GameEngine extends AbstractEngine{
 		}
 		if(paused){
 			g.drawString("Game paused!", 10, 50);
-			if(!getState().equals("game_over")){
+			if(!gameOver){
 				g.drawString(
 						"(Press space to return to menu, press enter to restart, press R to resume)",
 						10, 70);
 			}
 		}
-		if(getState().equals("game_over")){
+		if(gameOver){
 			if(getParent().getWindowMenu().getComponent()
 					.equals(getParent().getGameOverMenu())){
 				g.drawString(
@@ -219,7 +223,7 @@ public class GameEngine extends AbstractEngine{
 						10, 70);
 			}
 		}
-		if(getState().equals("game_over")){
+		if(gameOver){
 			g.drawString("Game Over!", 10, 50);
 		}
 	}
@@ -227,7 +231,7 @@ public class GameEngine extends AbstractEngine{
 	@Override
 	public void update(GameContainer gc, int delta){
 		Input input = gc.getInput();
-		if(getState().equals("game_over")){
+		if(gameOver){
 			gameOverUpdate(input, delta);
 			return;
 		}
@@ -630,7 +634,7 @@ public class GameEngine extends AbstractEngine{
 		if(Main.debug){
 			System.out.println("Game Over! Score: " + Helper.round(-gameY, 2));
 		}
-		setState("game_over");
+		gameOver = true;
 		for(char c : lastUsedName.toCharArray()){
 			addNameChar(c);
 		}
@@ -653,7 +657,6 @@ public class GameEngine extends AbstractEngine{
 			legitHash = false;
 			hash = 0;
 		}
-		initialized = false;
 	}
 
 	protected void postCollisionCheck(){
@@ -886,6 +889,7 @@ public class GameEngine extends AbstractEngine{
 		return engine;
 	}
 
+	@Override
 	public boolean isInitialized(){
 		return initialized;
 	}
@@ -893,6 +897,7 @@ public class GameEngine extends AbstractEngine{
 	public void reset(){
 		initialized = false;
 		paused = false;
+		gameOver = false;
 	}
 
 	@Override
@@ -901,15 +906,8 @@ public class GameEngine extends AbstractEngine{
 	}
 
 	@Override
-	public Set<String> renderingStates(){
-		Set<String> states = new HashSet<String>();
-		Collections.addAll(states, "game", "game_over");
-		return states;
-	}
-
-	@Override
 	public boolean hasInputFocus(){
-		return renderingStates().contains(getState()) &&
+		return toBeRendered() &&
 				getParent().hasInputFocus();
 	}
 
@@ -923,7 +921,7 @@ public class GameEngine extends AbstractEngine{
 		if(key == Input.KEY_ESCAPE){
 			return;
 		}
-		if(getState().equals("game_over")){
+		if(gameOver){
 			if(getParent().getWindowMenu().getComponent()
 					.equals(getParent().getGameOverMenu())){
 				if(key == Input.KEY_BACK || key == Input.KEY_DELETE){
@@ -938,7 +936,6 @@ public class GameEngine extends AbstractEngine{
 					getParent().updateHighScore();
 					getParent().getWindowMenu().setVisible(false);
 					reset();
-					setState("game");
 				}
 				else if(key == Input.KEY_ENTER){
 					getParent().updateHighScore();
@@ -956,14 +953,13 @@ public class GameEngine extends AbstractEngine{
 				if(key == Input.KEY_SPACE){
 					paused = true;
 					getParent().getWindowMenu().setVisible(false);
-					setState("menu");
+					getParent().setForegroundEngine(getParent().getMenuEngine());
 					return;
 				}
 				else if(key == Input.KEY_ENTER){
 					paused = false;
 					getParent().getWindowMenu().setVisible(false);
 					reset();
-					setState("game");
 					return;
 				}
 			}
@@ -973,11 +969,10 @@ public class GameEngine extends AbstractEngine{
 				paused = false;
 				if(key == Input.KEY_SPACE){
 					paused = true;
-					setState("menu");
+					getParent().setForegroundEngine(getParent().getMenuEngine());
 				}
 				else if(key == Input.KEY_ENTER){
 					reset();
-					setState("game");
 				}
 				return;
 			}
@@ -1039,5 +1034,10 @@ public class GameEngine extends AbstractEngine{
 
 	public void setSoundOn(boolean paused){
 		AudioHelper.getLooper().setPaused(paused);
+	}
+
+	@Override
+	public boolean isActive(){
+		return getParent().getActiveEngines().contains(this);
 	}
 }

@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.GameContainer;
@@ -39,11 +40,12 @@ import com.github.assisstion.towerScaler.menu.OptionsMenu;
 
 public class MainEngine extends BasicGame implements Engine{
 
-	protected String state = "main";
 	protected Map<String, String> properties;
 	protected MenuEngine me;
 	protected GameEngine ge;
 	protected Set<Engine> engines;
+	protected Set<Engine> backgroundEngines;
+	protected Engine foregroundEngine;
 	protected Set<TSMenu> menus = new HashSet<TSMenu>();
 	protected HighScoreMenu hsm;
 	protected GameOverMenu gom;
@@ -61,6 +63,8 @@ public class MainEngine extends BasicGame implements Engine{
 		me = new MenuEngine(this);
 		properties = new HashMap<String, String>();
 		engines = new HashSet<Engine>();
+		backgroundEngines = new CopyOnWriteArraySet<Engine>();
+		foregroundEngine = this;
 		Collections.addAll(engines, ge, me);
 	}
 
@@ -76,8 +80,7 @@ public class MainEngine extends BasicGame implements Engine{
 		renderMain(gc, g);
 		Set<Display> renderingDisplays = new HashSet<Display>();
 		for(Engine e : engines){
-			if(e.renderingStates() == null ||
-					e.renderingStates().contains(getState())){
+			if(e.toBeRendered()){
 				renderingDisplays.add(e);
 			}
 		}
@@ -179,13 +182,13 @@ public class MainEngine extends BasicGame implements Engine{
 			public void componentActivated(AbstractComponent source){
 				ge.paused = false;
 				ge.reset();
-				setState("game");
+				foregroundEngine = ge;
 			}
 
 		});
 		tsscwm.init(gc);
 		loadData();
-		state = "menu";
+		foregroundEngine = me;
 		me.init(gc);
 	}
 
@@ -242,14 +245,13 @@ public class MainEngine extends BasicGame implements Engine{
 
 	@Override
 	public void update(GameContainer gc, int delta) throws SlickException{
-		if(state.equals("menu")){
-			me.update(gc, delta);
-		}
-		if(state.equals("game") || state.equals("game_over")){
-			if(state.equals("game") && !ge.isInitialized()){
-				ge.init(gc);
+		for(Engine e : engines){
+			if(e.isActive()){
+				if(!e.isInitialized()){
+					e.init(gc);
+				}
+				e.update(gc, delta);
 			}
-			ge.update(gc, delta);
 		}
 	}
 
@@ -313,12 +315,12 @@ public class MainEngine extends BasicGame implements Engine{
 						break listen;
 					}
 				}
-				if(state.equals("game") || state.equals("game_over")){
+				if(ge.isActive()){
 					ge.paused = true;
-					state = "menu";
+					foregroundEngine = me;
 					break listen;
 				}
-				else if(state.equals("menu")){
+				else if(me.isActive()){
 					if(Main.debug){
 						System.out.println("Exiting system");
 					}
@@ -326,7 +328,7 @@ public class MainEngine extends BasicGame implements Engine{
 				}
 			}
 			if(key == Input.KEY_SPACE){
-				if(state.equals("menu")){
+				if(me.isActive()){
 					if(hasInputFocus()){
 						ge.setArcadeMode(true);
 						startGame();
@@ -335,7 +337,7 @@ public class MainEngine extends BasicGame implements Engine{
 				break listen;
 			}
 			if(key == Input.KEY_ENTER){
-				if(state.equals("menu")){
+				if(me.isActive()){
 					if(hasInputFocus()){
 						ge.setArcadeMode(false);
 						startGame();
@@ -399,17 +401,7 @@ public class MainEngine extends BasicGame implements Engine{
 
 	public void startGame(){
 		ge.reset();
-		state = "game";
-	}
-
-	@Override
-	public void setState(String state){
-		this.state = state;
-	}
-
-	@Override
-	public String getState(){
-		return state;
+		foregroundEngine = ge;
 	}
 
 	// Always returns null
@@ -443,10 +435,17 @@ public class MainEngine extends BasicGame implements Engine{
 		return Collections.singleton(0);
 	}
 
-	// Always returns null
-	@Override
-	public Set<String> renderingStates(){
-		return null;
+	//Mutable
+	public Set<Engine> getBackgroundEngines(){
+		return backgroundEngines;
+	}
+
+	public Engine getForegroundEngine(){
+		return foregroundEngine;
+	}
+
+	public void setForegroundEngine(Engine fe){
+		foregroundEngine = fe;
 	}
 
 	@Override
@@ -498,5 +497,37 @@ public class MainEngine extends BasicGame implements Engine{
 
 	public OptionsMenu getOptionsMenu(){
 		return opm;
+	}
+
+	//Unmodifiable set
+	public Set<Engine> getActiveEngines(){
+		Set<Engine> set = new HashSet<Engine>(backgroundEngines);
+		set.add(foregroundEngine);
+		return Collections.unmodifiableSet(set);
+	}
+
+	//Always returns true
+	@Override
+	public boolean isActive(){
+		return true;
+	}
+
+	//Always returns true
+	@Override
+	public boolean toBeRendered(){
+		return true;
+	}
+
+	public MenuEngine getMenuEngine(){
+		return me;
+	}
+
+	public GameEngine getGameEngine(){
+		return ge;
+	}
+
+	@Override
+	public boolean isInitialized(){
+		return true;
 	}
 }

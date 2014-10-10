@@ -20,11 +20,6 @@ public abstract class AbstractEngine implements Engine, KeyListener{
 	}
 
 	@Override
-	public void setState(String state){
-		getParent().setState(state);
-	}
-
-	@Override
 	public void setEngineProperties(Map<String, String> properties){
 		getParent().setEngineProperties(properties);
 	}
@@ -32,11 +27,6 @@ public abstract class AbstractEngine implements Engine, KeyListener{
 	@Override
 	public void setEngineProperty(String key, String value){
 		getParent().setEngineProperty(key, value);
-	}
-
-	@Override
-	public String getState(){
-		return getParent().getState();
 	}
 
 	@Override
@@ -97,5 +87,20 @@ public abstract class AbstractEngine implements Engine, KeyListener{
 	@Override
 	public void keyReleased(int key, char c){
 
+	}
+
+	@Override
+	public boolean isActive(){
+		return getParent().isActive();
+	}
+
+	@Override
+	public boolean toBeRendered(){
+		return isActive();
+	}
+
+	@Override
+	public boolean isInitialized(){
+		return true;
 	}
 }
