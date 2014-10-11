@@ -28,6 +28,7 @@ import org.newdawn.slick.gui.ComponentListener;
 
 import com.github.assisstion.towerScaler.HighScoreTable;
 import com.github.assisstion.towerScaler.Main;
+import com.github.assisstion.towerScaler.StatsHolder;
 import com.github.assisstion.towerScaler.Version;
 import com.github.assisstion.towerScaler.TSToolkit.TSMenu;
 import com.github.assisstion.towerScaler.TSToolkit.TSSingleContainerWindowMenu;
@@ -37,6 +38,7 @@ import com.github.assisstion.towerScaler.data.SimpleEncryptionOutputStream;
 import com.github.assisstion.towerScaler.menu.GameOverMenu;
 import com.github.assisstion.towerScaler.menu.HighScoreMenu;
 import com.github.assisstion.towerScaler.menu.OptionsMenu;
+import com.github.assisstion.towerScaler.menu.StatsMenu;
 
 public class MainEngine extends BasicGame implements Engine{
 
@@ -52,7 +54,8 @@ public class MainEngine extends BasicGame implements Engine{
 	protected TSSingleContainerWindowMenu tsscwm;
 	protected Set<KeyListener> keyListeners = new HashSet<KeyListener>();
 	protected Properties preferences = new Properties();
-	private OptionsMenu opm;
+	protected OptionsMenu opm;
+	protected StatsMenu stm;
 
 	public MainEngine(){
 		super("Tower Scaler" +
@@ -165,11 +168,17 @@ public class MainEngine extends BasicGame implements Engine{
 				Main.getGameFrameWidth() * 3 / 4,
 				Main.getGameFrameHeight() * 3 / 4, ge);
 		opm.init(gc);
+		stm = new StatsMenu(gc, Main.getGameFrameWidth() / 4,
+				Main.getGameFrameHeight() / 4,
+				Main.getGameFrameWidth() * 3 / 4,
+				Main.getGameFrameHeight() * 3 / 4, ge);
+		stm.init(gc);
 		gom.getButton().addListener(new ComponentListener(){
 
 			@Override
 			public void componentActivated(AbstractComponent source){
 				updateHighScore();
+				updateStats();
 				TSSingleContainerWindowMenu tsscwm = getWindowMenu();
 				tsscwm.setComponent(getHighScoreMenu());
 			}
@@ -209,6 +218,24 @@ public class MainEngine extends BasicGame implements Engine{
 				HighScoreTable hst = (HighScoreTable) obj;
 				hst.validateScores();
 				hsm.setHighScores(hst);
+			}
+			else{
+				throw new IOException();
+			}
+			File stFile = new File("data" + File.separator + "stats.dat");
+			new File(stFile.getParent()).mkdirs();
+			stFile.createNewFile();
+			List<? extends Object> stList = DataHelper
+					.readObjects(new BufferedInputStream(
+							new SimpleEncryptionInputStream(
+									new FileInputStream(stFile), (byte) 255)));
+			if(stList == null){
+				throw new IOException();
+			}
+			Object stObj = stList.get(0);
+			if(stObj instanceof StatsHolder){
+				StatsHolder hst = (StatsHolder) stObj;
+				stm.setStatsHolder(hst);
 			}
 			else{
 				throw new IOException();
@@ -260,6 +287,24 @@ public class MainEngine extends BasicGame implements Engine{
 		super.keyReleased(key, c);
 		for(KeyListener listener : keyListeners){
 			listener.keyReleased(key, c);
+		}
+	}
+
+	protected void updateStats(){
+		try{
+			stm.updateFromGame();
+			File stFile = new File("data" + File.separator +
+					"stats.dat");
+			new File(stFile.getParent()).mkdirs();
+			stFile.createNewFile();
+			DataHelper.writeObjects(stFile, new BufferedOutputStream(
+					new SimpleEncryptionOutputStream(new FileOutputStream(
+							stFile), (byte) 255)), Collections
+							.singletonList(stm.getStatsHolder()));
+		}
+		catch(IOException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -356,6 +401,10 @@ public class MainEngine extends BasicGame implements Engine{
 							getHighScoreMenu().getIndex() - 10);
 					break listen;
 				}
+			}
+			if(getStatsMenu().hasInputFocus()){
+				getStatsMenu().pushChar(key, c);
+				break listen;
 			}
 		}
 		for(KeyListener listener : keyListeners){
@@ -497,6 +546,10 @@ public class MainEngine extends BasicGame implements Engine{
 
 	public OptionsMenu getOptionsMenu(){
 		return opm;
+	}
+
+	public StatsMenu getStatsMenu(){
+		return stm;
 	}
 
 	//Unmodifiable set

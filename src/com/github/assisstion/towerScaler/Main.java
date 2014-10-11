@@ -17,6 +17,10 @@ import com.github.assisstion.towerScaler.media.AudioHelper;
  *
  * Version History:
  *
+ * Pre-Alpha 0.2.3.0 (2014-10-11)
+ *   Added Stats menu
+ *   Added Stats storage system
+ *
  * Pre-Alpha 0.2.2.4 (2014-10-10)
  *   Changed state-based system to "Active Engine" based system
  *
@@ -137,7 +141,7 @@ import com.github.assisstion.towerScaler.media.AudioHelper;
  *
  */
 
-@Version(value = "Pre-Alpha 0.2.2.4", lastUpdate = "2014-10-10")
+@Version(value = "Pre-Alpha 0.2.3.0", lastUpdate = "2014-10-11")
 public final class Main{
 
 	private Main(){

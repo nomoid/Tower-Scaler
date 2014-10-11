@@ -69,6 +69,10 @@ public class GameEngine extends AbstractEngine{
 	protected Random random;
 	// If the game is over
 	protected boolean gameOver;
+	protected boolean hasNextSeed;
+	protected long nextSeed;
+	protected long lastStart;
+	protected long lastGameTime;
 
 	public GameEngine(MainEngine parent){
 		engine = parent;
@@ -82,9 +86,16 @@ public class GameEngine extends AbstractEngine{
 	@Override
 	public void init(GameContainer gc){
 		initialized = true;
+		lastStart = System.currentTimeMillis();
 		hash = 0;
 		hv = 0;
-		random = new Random();
+		if(hasNextSeed){
+			random = new Random(nextSeed);
+			hasNextSeed = false;
+		}
+		else{
+			random = new Random();
+		}
 		entities = new HashSet<Entity>();
 		collisionObjects = new HashSet<CollisionEntity>();
 		collidables = new HashSet<GravitationalEntity>();
@@ -635,6 +646,8 @@ public class GameEngine extends AbstractEngine{
 			System.out.println("Game Over! Score: " + Helper.round(-gameY, 2));
 		}
 		gameOver = true;
+		lastGameTime = System.currentTimeMillis() - lastStart;
+		lastStart = 0;
 		for(char c : lastUsedName.toCharArray()){
 			addNameChar(c);
 		}
@@ -934,11 +947,13 @@ public class GameEngine extends AbstractEngine{
 				else if(key == Input.KEY_SPACE){
 					paused = false;
 					getParent().updateHighScore();
+					getParent().updateStats();
 					getParent().getWindowMenu().setVisible(false);
 					reset();
 				}
 				else if(key == Input.KEY_ENTER){
 					getParent().updateHighScore();
+					getParent().updateStats();
 					TSSingleContainerWindowMenu tsscwm = getParent()
 							.getWindowMenu();
 					tsscwm.setComponent(getParent().getHighScoreMenu());
@@ -1039,5 +1054,14 @@ public class GameEngine extends AbstractEngine{
 	@Override
 	public boolean isActive(){
 		return getParent().getActiveEngines().contains(this);
+	}
+
+	public void pushNextRandom(int seed){
+		hasNextSeed = true;
+		nextSeed = seed;
+	}
+
+	public long getLastGameTime(){
+		return lastGameTime;
 	}
 }

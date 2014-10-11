@@ -18,6 +18,7 @@ import com.github.assisstion.towerScaler.Helper;
 import com.github.assisstion.towerScaler.Main;
 import com.github.assisstion.towerScaler.menu.HighScoreMenu;
 import com.github.assisstion.towerScaler.menu.OptionsMenu;
+import com.github.assisstion.towerScaler.menu.StatsMenu;
 
 public class MenuEngine extends AbstractEngine{
 
@@ -27,7 +28,8 @@ public class MenuEngine extends AbstractEngine{
 	protected TSFocusTextButton arcadeModeButton;
 	protected TrueTypeFont titleFont;
 	protected TrueTypeFont subtitleFont;
-	private TSFocusTextButton optionsButton;
+	protected TSFocusTextButton optionsButton;
+	protected TSFocusTextButton statsButton;
 
 	public MenuEngine(MainEngine e){
 		engine = e;
@@ -73,6 +75,7 @@ public class MenuEngine extends AbstractEngine{
 		highScoreButton.render(gc, g);
 		optionsButton.render(gc, g);
 		arcadeModeButton.render(gc, g);
+		statsButton.render(gc, g);
 	}
 
 	protected void render1(GameContainer gc, Graphics g){
@@ -118,6 +121,18 @@ public class MenuEngine extends AbstractEngine{
 				OptionsMenu hsm = getParent().getOptionsMenu();
 				hsm.setVisible(true);
 				addMenu(hsm);
+			}
+		});
+		statsButton = new TSFocusTextButton(gc, this,
+				Main.getGameFrameWidth() / 2, 360, " Stats ",
+				Helper.getDefaultFont(), Color.black, new Color(150, 150, 150),
+				Color.black);
+		statsButton.addListener(new ComponentListener(){
+			@Override
+			public void componentActivated(AbstractComponent source){
+				StatsMenu stm = getParent().getStatsMenu();
+				stm.setVisible(true);
+				addMenu(stm);
 			}
 		});
 		arcadeModeButton = new TSFocusTextButton(gc, this,
