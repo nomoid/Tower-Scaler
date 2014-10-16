@@ -17,6 +17,12 @@ import com.github.assisstion.towerScaler.media.AudioHelper;
  *
  * Version History:
  *
+ * Pre-Alpha 0.3.0.0 (2014-10-15)
+ *   Added multiplayer
+ *   Added multiplayer processor
+ *   Added multiplayer command system
+ *   Added dependency on SocketRelay API 1.1.4
+ *
  * Pre-Alpha 0.2.3.0 (2014-10-11)
  *   Added Stats menu
  *   Added Stats storage system
@@ -141,7 +147,7 @@ import com.github.assisstion.towerScaler.media.AudioHelper;
  *
  */
 
-@Version(value = "Pre-Alpha 0.2.3.0", lastUpdate = "2014-10-11")
+@Version(value = "Pre-Alpha 0.3.0.0", lastUpdate = "2014-10-15")
 public final class Main{
 
 	private Main(){

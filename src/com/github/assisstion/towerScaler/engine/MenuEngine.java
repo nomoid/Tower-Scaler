@@ -19,6 +19,7 @@ import com.github.assisstion.towerScaler.Main;
 import com.github.assisstion.towerScaler.menu.HighScoreMenu;
 import com.github.assisstion.towerScaler.menu.OptionsMenu;
 import com.github.assisstion.towerScaler.menu.StatsMenu;
+import com.github.assisstion.towerScaler.multiplayer.MultiplayerMenu;
 
 public class MenuEngine extends AbstractEngine{
 
@@ -30,6 +31,7 @@ public class MenuEngine extends AbstractEngine{
 	protected TrueTypeFont subtitleFont;
 	protected TSFocusTextButton optionsButton;
 	protected TSFocusTextButton statsButton;
+	private TSFocusTextButton multiplayerButton;
 
 	public MenuEngine(MainEngine e){
 		engine = e;
@@ -76,6 +78,7 @@ public class MenuEngine extends AbstractEngine{
 		optionsButton.render(gc, g);
 		arcadeModeButton.render(gc, g);
 		statsButton.render(gc, g);
+		multiplayerButton.render(gc, g);
 	}
 
 	protected void render1(GameContainer gc, Graphics g){
@@ -144,6 +147,19 @@ public class MenuEngine extends AbstractEngine{
 			public void componentActivated(AbstractComponent source){
 				getParent().ge.setArcadeMode(true);
 				getParent().startGame();
+			}
+		});
+		multiplayerButton = new TSFocusTextButton(gc, this,
+				Main.getGameFrameWidth() / 2, 400, " Multiplayer ",
+				Helper.getDefaultFont(), Color.black, new Color(255, 255, 255),
+				Color.black);
+		multiplayerButton.addListener(new ComponentListener(){
+			@Override
+			public void componentActivated(AbstractComponent source){
+				MultiplayerMenu mpm = getParent().getMultiplayerMenu();
+				mpm.reset();
+				mpm.setVisible(true);
+				addMenu(mpm);
 			}
 		});
 	}

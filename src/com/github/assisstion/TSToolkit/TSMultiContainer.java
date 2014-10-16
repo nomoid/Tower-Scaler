@@ -9,7 +9,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.gui.GUIContext;
 
 public abstract class TSMultiContainer extends TSComponent implements
-		TSContainer{
+TSContainer{
 
 	protected List<TSComponent> components;
 
@@ -44,6 +44,13 @@ public abstract class TSMultiContainer extends TSComponent implements
 	protected void removeComponent(TSComponent component){
 		component.setParent(null);
 		components.remove(component);
+	}
+
+	protected void clearComponents(){
+		for(TSComponent component : components){
+			component.setParent(null);
+		}
+		components.clear();
 	}
 
 	protected List<TSComponent> getComponents(){

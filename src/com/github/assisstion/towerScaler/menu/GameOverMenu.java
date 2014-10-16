@@ -17,6 +17,8 @@ public class GameOverMenu extends TSWindowMenu{
 
 	protected GameEngine ge;
 	protected TSFocusTextButton tsftb;
+	protected boolean mp;
+	protected boolean win;
 
 	public GameOverMenu(GUIContext container, int x1, int y1, int x2, int y2,
 			GameEngine ge){
@@ -41,10 +43,18 @@ public class GameOverMenu extends TSWindowMenu{
 	public void renderContainer(GameContainer gc, Graphics g, int x, int y)
 			throws SlickException{
 		super.renderContainer(gc, g, x, y);
-		TSTextLabel name = new TSTextLabel(gc, getWidth() / 8, getHeight() / 4,
-				"Name:     " + ge.getName(), Helper.getDefaultFont(),
-				Color.black, -1, 0);
-		name.render(gc, g, getContainerX() + x, getContainerY() + y);
+		if(!mp){
+			TSTextLabel name = new TSTextLabel(gc, getWidth() / 8, getHeight() / 4,
+					"Name:     " + ge.getName(), Helper.getDefaultFont(),
+					Color.black, -1, 0);
+			name.render(gc, g, getContainerX() + x, getContainerY() + y);
+		}
+		else{
+			TSTextLabel winL = new TSTextLabel(gc, getWidth() / 8, getHeight() / 4,
+					"You " + (win ? "Win!" : "Lost"), Helper.getDefaultFont(),
+					Color.black, -1, 0);
+			winL.render(gc, g, getContainerX() + x, getContainerY() + y);
+		}
 	}
 
 	@Override
@@ -62,5 +72,24 @@ public class GameOverMenu extends TSWindowMenu{
 
 	public TSFocusTextButton getButton(){
 		return tsftb;
+	}
+
+	public void setMultiplayer(boolean multiplayer, boolean win){
+		if(mp == multiplayer && win == this.win){
+			return;
+		}
+		mp = multiplayer;
+		if(mp){
+			removeComponent(tsftb);
+		}
+		else{
+			addComponent(tsftb);
+		}
+		if(mp){
+			this.win = win;
+		}
+		else{
+			this.win = false;
+		}
 	}
 }

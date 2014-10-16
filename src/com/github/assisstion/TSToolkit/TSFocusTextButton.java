@@ -55,7 +55,7 @@ public class TSFocusTextButton extends TSFocusButton{
 		this.text = text;
 		this.font = font;
 		this.textColor = textColor;
-		this.borderPadding = padding;
+		borderPadding = padding;
 		this.alignX = alignX;
 		this.alignY = alignY;
 	}
@@ -115,7 +115,7 @@ public class TSFocusTextButton extends TSFocusButton{
 			case -1:
 				return getOriginalX();
 			case 0:
-				return getOriginalX() - (getTextWidth() / 2);
+				return getOriginalX() - getTextWidth() / 2;
 			case 1:
 				return getOriginalX() - getTextWidth();
 			default:
@@ -147,7 +147,7 @@ public class TSFocusTextButton extends TSFocusButton{
 			case -1:
 				return getOriginalY();
 			case 0:
-				return getOriginalY() - (getTextHeight() / 2);
+				return getOriginalY() - getTextHeight() / 2;
 			case 1:
 				return getOriginalY() - getTextHeight();
 			default:
