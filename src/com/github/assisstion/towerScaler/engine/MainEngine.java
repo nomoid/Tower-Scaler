@@ -2,6 +2,7 @@ package com.github.assisstion.towerScaler.engine;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -39,9 +40,17 @@ import com.github.assisstion.towerScaler.menu.GameOverMenu;
 import com.github.assisstion.towerScaler.menu.HighScoreMenu;
 import com.github.assisstion.towerScaler.menu.OptionsMenu;
 import com.github.assisstion.towerScaler.menu.StatsMenu;
+import com.github.assisstion.towerScaler.multiplayer.MultiplayerGameEngine;
+import com.github.assisstion.towerScaler.multiplayer.MultiplayerMenu;
+import com.github.assisstion.towerScaler.multiplayer.MultiplayerProcessor;
+import com.markusfeng.SocketRelay.A.SocketClient;
+import com.markusfeng.SocketRelay.A.SocketHandler;
+import com.markusfeng.SocketRelay.A.SocketServer;
+import com.markusfeng.SocketRelay.C.SocketHelper;
 
 public class MainEngine extends BasicGame implements Engine{
 
+	protected static final int DEFAULT_PORT = 50131;
 	protected Map<String, String> properties;
 	protected MenuEngine me;
 	protected GameEngine ge;
@@ -56,19 +65,25 @@ public class MainEngine extends BasicGame implements Engine{
 	protected Properties preferences = new Properties();
 	protected OptionsMenu opm;
 	protected StatsMenu stm;
+	protected MultiplayerMenu mpm;
+	protected MultiplayerGameEngine mge;
+	private boolean lastGameMP;
+	protected Set<Closeable> closeables;
 
 	public MainEngine(){
 		super("Tower Scaler" +
 				(Main.class.getAnnotation(Version.class) == null ? ""
 						: " - Version " + Main.class.getAnnotation(
 								Version.class).value()));
+		closeables = new HashSet<Closeable>();
 		ge = new GameEngine(this);
 		me = new MenuEngine(this);
+		mge = new MultiplayerGameEngine(this);
 		properties = new HashMap<String, String>();
 		engines = new HashSet<Engine>();
 		backgroundEngines = new CopyOnWriteArraySet<Engine>();
-		foregroundEngine = this;
-		Collections.addAll(engines, ge, me);
+		setForegroundEngine(this);
+		Collections.addAll(engines, ge, me, mge);
 	}
 
 	@Override
@@ -173,6 +188,58 @@ public class MainEngine extends BasicGame implements Engine{
 				Main.getGameFrameWidth() * 3 / 4,
 				Main.getGameFrameHeight() * 3 / 4, ge);
 		stm.init(gc);
+		mpm = new MultiplayerMenu(gc, Main.getGameFrameWidth() / 4,
+				Main.getGameFrameHeight() / 4,
+				Main.getGameFrameWidth() * 3 / 4,
+				Main.getGameFrameHeight() * 3 / 4, mge);
+		mpm.init(gc);
+		mpm.getServerButton().addListener(new ComponentListener(){
+
+			@Override
+			public void componentActivated(AbstractComponent source){
+
+				MultiplayerProcessor mp = new MultiplayerProcessor(MainEngine.this, true);
+				try{
+					String host = mpm.getField();
+					int port = host == "" ? DEFAULT_PORT : Integer.parseInt(mpm.getField());
+					SocketServer<SocketHandler<String>> server =
+							SocketHelper.getStringServer(port, mp);
+					closeables.add(server);
+					server.open();
+					mpm.serverWindow(server);
+				}
+				catch(NumberFormatException | IOException e){
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				mge.addProcessor(mp);
+			}
+
+		});
+		mpm.getClientButton().addListener(new ComponentListener(){
+
+			@Override
+			public void componentActivated(AbstractComponent source){
+
+				MultiplayerProcessor mp = new MultiplayerProcessor(MainEngine.this, false);
+				try{
+					String[] field = mpm.getField().split(":");
+					String host = field.length < 1 ? "localhost" : field[0];
+					int port = field.length < 2 ? DEFAULT_PORT : Integer.parseInt(field[1]);
+					SocketClient<SocketHandler<String>> client =
+							SocketHelper.getStringClient(host, port, mp);
+					closeables.add(client);
+					client.open();
+					mp.start(false);
+					mge.addProcessor(mp);
+				}
+				catch(NumberFormatException | IOException e){
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+		});
 		gom.getButton().addListener(new ComponentListener(){
 
 			@Override
@@ -189,15 +256,20 @@ public class MainEngine extends BasicGame implements Engine{
 
 			@Override
 			public void componentActivated(AbstractComponent source){
-				ge.paused = false;
-				ge.reset();
-				foregroundEngine = ge;
+				if(lastGameMP){
+					resetMP(false);
+				}
+				else{
+					ge.paused = false;
+					ge.reset();
+					setForegroundEngine(ge);
+				}
 			}
 
 		});
 		tsscwm.init(gc);
 		loadData();
-		foregroundEngine = me;
+		setForegroundEngine(me);
 		me.init(gc);
 	}
 
@@ -362,7 +434,12 @@ public class MainEngine extends BasicGame implements Engine{
 				}
 				if(ge.isActive()){
 					ge.paused = true;
-					foregroundEngine = me;
+					setForegroundEngine(me);
+					break listen;
+				}
+				else if(mge.isActive()){
+					mge.paused = true;
+					setForegroundEngine(me);
 					break listen;
 				}
 				else if(me.isActive()){
@@ -404,6 +481,10 @@ public class MainEngine extends BasicGame implements Engine{
 			}
 			if(getStatsMenu().hasInputFocus()){
 				getStatsMenu().pushChar(key, c);
+				break listen;
+			}
+			if(getMultiplayerMenu().hasInputFocus()){
+				getMultiplayerMenu().pushChar(key, c);
 				break listen;
 			}
 		}
@@ -449,8 +530,9 @@ public class MainEngine extends BasicGame implements Engine{
 	}
 
 	public void startGame(){
+		lastGameMP = false;
 		ge.reset();
-		foregroundEngine = ge;
+		setForegroundEngine(ge);
 	}
 
 	// Always returns null
@@ -495,6 +577,16 @@ public class MainEngine extends BasicGame implements Engine{
 
 	public void setForegroundEngine(Engine fe){
 		foregroundEngine = fe;
+		if(!(fe instanceof MultiplayerGameEngine)){
+			try{
+				mge.disconnect();
+				close();
+			}
+			catch(IOException e){
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override
@@ -582,5 +674,51 @@ public class MainEngine extends BasicGame implements Engine{
 	@Override
 	public boolean isInitialized(){
 		return true;
+	}
+
+	public MultiplayerMenu getMultiplayerMenu(){
+		return mpm;
+	}
+
+	public MultiplayerGameEngine getMultiplayerGameEngine(){
+		return mge;
+	}
+
+	public void startMultiplayer(){
+		lastGameMP = true;
+		mge.reset();
+		mpm.setVisible(false);
+		setForegroundEngine(mge);
+	}
+
+	public void resetMP(boolean calledByOthers){
+		mge.paused = false;
+		mge.reset();
+		if(!calledByOthers){
+			mge.callForReset();
+		}
+		else{
+			getWindowMenu().setVisible(false);
+		}
+		setForegroundEngine(mge);
+	}
+
+	public void close() throws IOException{
+		for(Closeable closeable : closeables){
+			closeable.close();
+		}
+	}
+
+	@Override
+	public boolean closeRequested(){
+		try{
+			mge.disconnect();
+			close();
+			return true;
+		}
+		catch(Exception e){
+			e.printStackTrace();
+			return true;
+		}
 	}
 }

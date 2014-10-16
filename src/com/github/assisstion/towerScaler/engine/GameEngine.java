@@ -26,6 +26,7 @@ import com.github.assisstion.towerScaler.entity.GravitationalEntity;
 import com.github.assisstion.towerScaler.entity.PlatformBlock;
 import com.github.assisstion.towerScaler.entity.Player;
 import com.github.assisstion.towerScaler.media.AudioHelper;
+import com.markusfeng.Shared.Pair;
 
 public class GameEngine extends AbstractEngine{
 
@@ -69,7 +70,6 @@ public class GameEngine extends AbstractEngine{
 	protected Random random;
 	// If the game is over
 	protected boolean gameOver;
-	protected boolean hasNextSeed;
 	protected long nextSeed;
 	protected long lastStart;
 	protected long lastGameTime;
@@ -83,50 +83,53 @@ public class GameEngine extends AbstractEngine{
 
 	}
 
-	@Override
-	public void init(GameContainer gc){
+	protected void startInit(GameContainer gc){
 		initialized = true;
-		lastStart = System.currentTimeMillis();
-		hash = 0;
-		hv = 0;
-		if(hasNextSeed){
-			random = new Random(nextSeed);
-			hasNextSeed = false;
-		}
-		else{
-			random = new Random();
-		}
+	}
+
+	protected void initRandom(){
+		random = new Random();
+	}
+
+	protected void initCollections(){
 		entities = new HashSet<Entity>();
 		collisionObjects = new HashSet<CollisionEntity>();
 		collidables = new HashSet<GravitationalEntity>();
 		safeBoxes = new HashMap<GravitationalEntity, Box>();
-		String playerLocation = arcadeMode ? "PlayerBlock.png"
+	}
+
+	protected String playerTexture(){
+		return arcadeMode ? "PlayerBlock.png"
 				: "PlayerLargeSprite.png";
+	}
+
+	protected String blockTexture(){
+		return arcadeMode ? "Block.png" : "ShortBlock.png";
+	}
+
+	protected void initPlayer(String playerLocation){
 		player = new Player(playerLocation);
 		entities.add(player);
 		collidables.add(player);
-		String blockLocation = arcadeMode ? "Block.png" : "ShortBlock.png";
-		PlatformBlock pb0 = new PlatformBlock(150, 0, blockLocation);
+	}
+
+	protected void initStartingBlocks(String blockLocation){
+		addBlock(blockLocation, 150, 0);
+		addBlock(blockLocation, 100, 100);
+		addBlock(blockLocation, 150, 200);
+		addBlock(blockLocation, 100, 300);
+		addBlock(blockLocation, 150, 400);
+		addBlock(blockLocation, 100, 500);
+		addBlock(blockLocation, 150, 600);
+	}
+
+	protected void addBlock(String blockLocation, int x, int y){
+		PlatformBlock pb0 = new PlatformBlock(x, y, blockLocation);
 		entities.add(pb0);
 		collisionObjects.add(pb0);
-		PlatformBlock pbn = new PlatformBlock(100, 100, blockLocation);
-		entities.add(pbn);
-		collisionObjects.add(pbn);
-		PlatformBlock pb1 = new PlatformBlock(150, 200, blockLocation);
-		entities.add(pb1);
-		collisionObjects.add(pb1);
-		PlatformBlock pb2 = new PlatformBlock(100, 300, blockLocation);
-		entities.add(pb2);
-		collisionObjects.add(pb2);
-		PlatformBlock pb3 = new PlatformBlock(150, 400, blockLocation);
-		entities.add(pb3);
-		collisionObjects.add(pb3);
-		PlatformBlock pb4 = new PlatformBlock(100, 500, blockLocation);
-		entities.add(pb4);
-		collisionObjects.add(pb4);
-		PlatformBlock pb5 = new PlatformBlock(150, 600, blockLocation);
-		entities.add(pb5);
-		collisionObjects.add(pb5);
+	}
+
+	protected void initGameLocation(){
 		nextUpdateY = 0;
 		nextUpdateX = 100;
 		if(arcadeMode){
@@ -136,6 +139,25 @@ public class GameEngine extends AbstractEngine{
 			gameX = 0;
 		}
 		gameY = 0;
+	}
+
+	protected void endInit(GameContainer gc){
+		//Do nothing
+	}
+
+	@Override
+	public void init(GameContainer gc){
+		startInit(gc);
+		lastStart = System.currentTimeMillis();
+		hash = 0;
+		hv = 0;
+		initRandom();
+		initCollections();
+		String playerLocation = playerTexture();
+		initPlayer(playerLocation);
+		String blockLocation = blockTexture();
+		initStartingBlocks(blockLocation);
+		initGameLocation();
 		paused = false;
 		scrollingEnabled = true;
 		blockCounter = 0;
@@ -169,6 +191,7 @@ public class GameEngine extends AbstractEngine{
 		gc.getInput().clearControlPressedRecord();
 		gc.getInput().clearKeyPressedRecord();
 		gc.getInput().clearMousePressedRecord();
+		endInit(gc);
 	}
 
 	@Override
@@ -177,30 +200,30 @@ public class GameEngine extends AbstractEngine{
 		render(gc, g);
 	}
 
-	@Override
-	public void render(GameContainer gc, Graphics g){
-		g.setBackground(new Color(150, 150, 255));
-		/*
-		 * UNUSED Random background mode g.setBackground(new
-		 * Color((int)(Math.random() * 255), (int)(Math.random() * 255),
-		 * (int)(Math.random() * 255)));
-		 */
+	protected void drawEntities(GameContainer gc, Graphics g){
 		Input input = gc.getInput();
 		int x = input.getMouseX();
 		int y = input.getMouseY();
 		for(Entity e : entities){
-			g.drawImage(e.getImage(), (float) (e.getX1() - gameX),
-					(float) (e.getY1() - gameY));
-			if(Main.debug){
-				if(e instanceof CollisionEntity){
-					if(new BoxImpl(e).pointIn(x + gameX, y + gameY)){
-						g.drawString(
-								e.getX1() + ", " + e.getY1() + ", " +
-										e.getX2() + ", " + e.getY2(), 10, 110);
-					}
+			drawEntity(e, g, x, y);
+		}
+	}
+
+	protected void drawEntity(Entity e, Graphics g, int mouseX, int mouseY){
+		g.drawImage(e.getImage(), (float) (e.getX1() - gameX),
+				(float) (e.getY1() - gameY));
+		if(Main.debug){
+			if(e instanceof CollisionEntity){
+				if(new BoxImpl(e).pointIn(mouseX + gameX, mouseY + gameY)){
+					g.drawString(
+							e.getX1() + ", " + e.getY1() + ", " +
+									e.getX2() + ", " + e.getY2(), 10, 110);
 				}
 			}
 		}
+	}
+
+	protected void drawOverlay(GameContainer gc, Graphics g){
 		g.setColor(Color.white);
 		g.drawString("Score: " + Helper.round(-gameY, 2), 10, 30);
 		if(Main.debug){
@@ -221,10 +244,17 @@ public class GameEngine extends AbstractEngine{
 			}
 		}
 		if(gameOver){
+			String query;
+			if(isMultiplayer()){
+				query = "(Press space or enter to restart)";
+			}
+			else{
+				query = "(Press space to restart, press enter to see highscores)";
+			}
 			if(getParent().getWindowMenu().getComponent()
 					.equals(getParent().getGameOverMenu())){
 				g.drawString(
-						"(Press space to restart, press enter to see highscores)",
+						query,
 						10, 70);
 			}
 			else if(getParent().getWindowMenu().getComponent()
@@ -240,13 +270,36 @@ public class GameEngine extends AbstractEngine{
 	}
 
 	@Override
+	public void render(GameContainer gc, Graphics g){
+		g.setBackground(new Color(150, 150, 255));
+		/*
+		 * UNUSED Random background mode g.setBackground(new
+		 * Color((int)(Math.random() * 255), (int)(Math.random() * 255),
+		 * (int)(Math.random() * 255)));
+		 */
+		drawEntities(gc, g);
+		drawOverlay(gc, g);
+	}
+
+	protected void beginUpdate(){
+		//Do nothing
+	}
+
+	protected void endUpdate(){
+		//Do nothing
+	}
+
+	@Override
 	public void update(GameContainer gc, int delta){
+		beginUpdate();
 		Input input = gc.getInput();
 		if(gameOver){
 			gameOverUpdate(input, delta);
+			endUpdate();
 			return;
 		}
 		if(!pauseCheck(input)){
+			endUpdate();
 			return;
 		}
 		upkeepCheck(input);
@@ -255,16 +308,25 @@ public class GameEngine extends AbstractEngine{
 		gameMovementCheck(gc);
 		postCollisionCheck();
 		cleanupCheck();
+		endUpdate();
 	}
 
 	protected void gameOverUpdate(Input input, int delta){
 
 	}
 
+	protected void pause(){
+		paused = true;
+	}
+
+	protected void unpause(){
+		paused = false;
+	}
+
 	protected boolean pauseCheck(Input input){
 		if(paused){
 			if(input.isKeyDown(Input.KEY_R)){
-				paused = false;
+				unpause();
 			}
 			else{
 				return false;
@@ -273,7 +335,7 @@ public class GameEngine extends AbstractEngine{
 		else{
 			if(allowPause){
 				if(input.isKeyDown(Input.KEY_P)){
-					paused = true;
+					pause();
 					return false;
 				}
 			}
@@ -281,10 +343,78 @@ public class GameEngine extends AbstractEngine{
 		return true;
 	}
 
-	protected void upkeepCheck(Input input){
+	protected void updateCamera(Input input){
 		if(arcadeMode){
 			gameX = player.getX1() - Main.getGameFrameWidth() / 2;
 		}
+	}
+
+	protected void scrollY(Input input){
+		double scroll = -(gameY / Constants.scrollSpeedFactor) + 1;
+		if(scroll > Constants.scrollMax){
+			scroll = Constants.scrollMax;
+		}
+		gameY -= scroll;
+	}
+
+	protected void generateBlocks(){
+		Set<PlatformBlock> addToEntities = new HashSet<PlatformBlock>();
+		String blockLocation = arcadeMode ? "Block.png" : "LongBlock.png";
+		for(int n = 0; n < 10; n++){
+			PlatformBlock pb0 = new PlatformBlock(nextUpdateX, gameY - 100,
+					blockLocation);
+			/*
+			 * UNUSED Continuous Platform Generation (Currently Disabled)
+			 * if(Math.random() * 2 < 1){ for(int i = 1; i < 10; i++){
+			 * PlatformBlock pb1 = new PlatformBlock(nextUpdateX -
+			 * pb0.getHeight() * i, gameY - 100, blockLocation); boolean
+			 * overlap = false; for(Entity e : addToEntities){ if(new
+			 * BoxImpl(e).overlaps(pb0)){ overlap = true; } } if(!overlap){
+			 * addToEntities.add(pb0); entities.add(pb0);
+			 * collisionObjects.add(pb0); } else{ break; } if(Math.random()
+			 * * (i + 2) >= 1){ break; } } }
+			 */
+			if(arcadeMode){
+				nextUpdateX = nextUpdateX + (random.nextDouble() - 0.5) * 200;
+			}
+			else{
+				nextUpdateX = random.nextDouble() *
+						(Main.getGameFrameWidth() - pb0.getWidth());
+			}
+
+			boolean overlap = false;
+			for(Entity e : addToEntities){
+				if(new BoxImpl(e).overlaps(pb0)){
+					overlap = true;
+				}
+			}
+			if(!overlap){
+				addToEntities.add(pb0);
+				entities.add(pb0);
+				collisionObjects.add(pb0);
+			}
+			else{
+				n--;
+			}
+			if(arcadeMode){
+				if(random.nextDouble() * (n + 1) >= 1){
+					break;
+				}
+			}
+			else{
+				if(random.nextDouble() * (10 - n) >= 9 - n){
+					break;
+				}
+			}
+
+		}
+		// Set value to 250 if non-random scrolling is desired
+		nextUpdateX = nextUpdateX + (random.nextDouble() - 0.5) * 200;
+		nextUpdateY -= 100;
+	}
+
+	protected void upkeepCheck(Input input){
+		updateCamera(input);
 		if(allowCheats){
 			if(input.isKeyDown(Input.KEY_L)){
 				scrollingEnabled = false;
@@ -298,11 +428,7 @@ public class GameEngine extends AbstractEngine{
 		}
 		if(scrollingEnabled){
 			int gY = (int) (Helper.round(-gameY, 6) * 100);
-			double scroll = -(gameY / Constants.scrollSpeedFactor) + 1;
-			if(scroll > Constants.scrollMax){
-				scroll = Constants.scrollMax;
-			}
-			gameY -= scroll;
+			scrollY(input);
 			if(legitHash){
 				hash ^= ((hash >> 31 & 4294967295L) + ((int) (Helper.round(
 						-gameY, 6) * 100) - gY) * hv) % 4294967296L << 31 ^
@@ -310,58 +436,7 @@ public class GameEngine extends AbstractEngine{
 			}
 		}
 		if(gameY <= nextUpdateY){
-			Set<PlatformBlock> addToEntities = new HashSet<PlatformBlock>();
-			String blockLocation = arcadeMode ? "Block.png" : "LongBlock.png";
-			for(int n = 0; n < 10; n++){
-				PlatformBlock pb0 = new PlatformBlock(nextUpdateX, gameY - 100,
-						blockLocation);
-				/*
-				 * UNUSED Continuous Platform Generation (Currently Disabled)
-				 * if(Math.random() * 2 < 1){ for(int i = 1; i < 10; i++){
-				 * PlatformBlock pb1 = new PlatformBlock(nextUpdateX -
-				 * pb0.getHeight() * i, gameY - 100, blockLocation); boolean
-				 * overlap = false; for(Entity e : addToEntities){ if(new
-				 * BoxImpl(e).overlaps(pb0)){ overlap = true; } } if(!overlap){
-				 * addToEntities.add(pb0); entities.add(pb0);
-				 * collisionObjects.add(pb0); } else{ break; } if(Math.random()
-				 * * (i + 2) >= 1){ break; } } }
-				 */
-				if(arcadeMode){
-					nextUpdateX = nextUpdateX + (random.nextDouble() - 0.5) * 200;
-				}
-				else{
-					nextUpdateX = random.nextDouble() *
-							(Main.getGameFrameWidth() - pb0.getWidth());
-				}
-
-				boolean overlap = false;
-				for(Entity e : addToEntities){
-					if(new BoxImpl(e).overlaps(pb0)){
-						overlap = true;
-					}
-				}
-				if(!overlap){
-					addToEntities.add(pb0);
-					entities.add(pb0);
-					collisionObjects.add(pb0);
-				}
-				else{
-					n--;
-				}
-				if(arcadeMode){
-					if(random.nextDouble() * (n + 1) >= 1){
-						break;
-					}
-				}
-				else{
-					if(random.nextDouble() * (10 - n) >= 9 - n){
-						break;
-					}
-				}
-			}
-			// Set value to 250 if non-random scrolling is desired
-			nextUpdateX = nextUpdateX + (random.nextDouble() - 0.5) * 200;
-			nextUpdateY -= 100;
+			generateBlocks();
 		}
 		blockCounter++;
 		aboveBlock = false;
@@ -369,6 +444,155 @@ public class GameEngine extends AbstractEngine{
 		leftOfBlock = false;
 		rightOfBlock = false;
 		safeBoxes.clear();
+	}
+
+	protected Pair<Boolean, Boolean> updateGravity(Pair<Boolean, Boolean> xyYes,
+			GravitationalEntity ge, CollisionEntity ce){
+		boolean xYes = xyYes.getValueOne();
+		boolean yYes = xyYes.getValueTwo();
+		// Down collision test
+		BoxImpl boxDown = new BoxImpl(ge.getBox());
+		boxDown.setPos(boxDown.getX1(), boxDown.getX2(),
+				boxDown.getY1(), boxDown.getY2() + 1);
+		if(boxDown.overlaps(ce)){
+			ge.setY(ce.getY1() - ge.getHeight() - 1);
+			ge.setYVelocity(0);
+			if(Constants.yGravity >= 0){
+				yYes = false;
+			}
+			aboveBlock = true;
+			blockCounter = 0;
+		}
+		// Up collision test
+		BoxImpl boxUp = new BoxImpl(ge.getBox());
+		boxUp.setPos(boxUp.getX1(), boxUp.getX2(),
+				boxUp.getY1() - 1, boxUp.getY2());
+		if(boxUp.overlaps(ce)){
+			ge.setY(ce.getY1() + ce.getHeight() + 1);
+			ge.setYVelocity(0);
+			if(Constants.yGravity <= 0){
+				yYes = false;
+			}
+			belowBlock = true;
+		}
+		// Left collision test
+		BoxImpl boxLeft = new BoxImpl(ge.getBox());
+		boxLeft.setPos(boxLeft.getX1() - 1, boxLeft.getX2(),
+				boxLeft.getY1(), boxLeft.getY2());
+		if(boxLeft.overlaps(ce)){
+			ge.setX(ce.getX1() + ce.getWidth() + 1);
+			ge.setXVelocity(0);
+			if(Constants.xGravity <= 0){
+				xYes = false;
+			}
+			rightOfBlock = true;
+		}
+		// Right collision test
+		BoxImpl boxRight = new BoxImpl(ge.getBox());
+		boxRight.setPos(boxRight.getX1(), boxRight.getX2() + 1,
+				boxRight.getY1(), boxRight.getY2());
+		if(boxRight.overlaps(ce)){
+			ge.setX(ce.getX1() - ge.getWidth() - 1);
+			ge.setXVelocity(0);
+			if(Constants.xGravity >= 0){
+				xYes = false;
+			}
+			leftOfBlock = true;
+		}
+		BoxImpl boxA;
+		if(!aboveBlock && !rightOfBlock){
+			boxA = new BoxImpl(ge.getBox());
+			boxA.setPos(boxA.getX1() - 1, boxA.getX2(),
+					boxA.getY1(), boxA.getY2() + 1);
+			if(boxA.overlaps(ce)){
+				if(-Constants.xGravity > Constants.yGravity){
+					ge.incrementX(-1);
+					ge.setYVelocity(0);
+					if(Constants.yGravity >= 0){
+						yYes = false;
+					}
+					blockCounter = 0;
+				}
+				else if(-Constants.xGravity < Constants.yGravity){
+					ge.incrementY(1);
+					ge.setXVelocity(0);
+					if(Constants.xGravity <= 0){
+						xYes = false;
+					}
+				}
+			}
+		}
+		if(!aboveBlock && !leftOfBlock){
+			boxA = new BoxImpl(ge.getBox());
+			boxA.setPos(boxA.getX1(), boxA.getX2() + 1,
+					boxA.getY1(), boxA.getY2() + 1);
+			if(boxA.overlaps(ce)){
+				if(Constants.xGravity > Constants.yGravity){
+					ge.incrementX(1);
+					ge.setYVelocity(0);
+					if(Constants.yGravity >= 0){
+						yYes = false;
+					}
+					blockCounter = 0;
+				}
+				else if(Constants.xGravity < Constants.yGravity){
+					ge.incrementY(1);
+					ge.setXVelocity(0);
+					if(Constants.xGravity >= 0){
+						xYes = false;
+					}
+				}
+			}
+		}
+		if(!belowBlock && !leftOfBlock){
+			boxA = new BoxImpl(ge.getBox());
+			boxA.setPos(boxA.getX1(), boxA.getX2() + 1,
+					boxA.getY1() - 1, boxA.getY2());
+			if(boxA.overlaps(ce)){
+				if(Constants.xGravity > -Constants.yGravity){
+					ge.incrementX(1);
+					ge.setYVelocity(0);
+					if(Constants.yGravity <= 0){
+						yYes = false;
+					}
+				}
+				else if(Constants.xGravity < -Constants.yGravity){
+					ge.incrementY(-1);
+					ge.setXVelocity(0);
+					if(Constants.xGravity >= 0){
+						xYes = false;
+					}
+				}
+			}
+		}
+		if(!belowBlock && !rightOfBlock){
+			boxA = new BoxImpl(ge.getBox());
+			boxA.setPos(boxA.getX1() - 1, boxA.getX2(),
+					boxA.getY1() - 1, boxA.getY2());
+			if(boxA.overlaps(ce)){
+				if(-Constants.xGravity > -Constants.yGravity){
+					ge.incrementX(-1);
+					ge.setYVelocity(0);
+					if(Constants.yGravity <= 0){
+						yYes = false;
+					}
+				}
+				else if(-Constants.xGravity < -Constants.yGravity){
+					ge.incrementY(-1);
+					ge.setXVelocity(0);
+					if(Constants.xGravity <= 0){
+						xYes = false;
+					}
+				}
+			}
+		}
+		return Pair.make(xYes, yYes);
+	}
+
+	protected Pair<Boolean, Boolean> collide(GravitationalEntity ge, CollisionEntity ce){
+		ge.setY(ce.getY1() - ge.getHeight() - 1);
+		ge.setYVelocity(0);
+		return Pair.make(false, false);
 	}
 
 	// @SuppressWarnings("unused")
@@ -381,154 +605,20 @@ public class GameEngine extends AbstractEngine{
 					continue;
 				}
 				if(!ge.overlaps(ce)){
-					// Down collision test
-					BoxImpl boxDown = new BoxImpl(ge.getBox());
-					boxDown.setPos(boxDown.getX1(), boxDown.getX2(),
-							boxDown.getY1(), boxDown.getY2() + 1);
-					if(boxDown.overlaps(ce)){
-						ge.setY(ce.getY1() - ge.getHeight() - 1);
-						ge.setYVelocity(0);
-						if(Constants.yGravity >= 0){
-							yYes = false;
-						}
-						aboveBlock = true;
-						blockCounter = 0;
-					}
-					// Up collision test
-					BoxImpl boxUp = new BoxImpl(ge.getBox());
-					boxUp.setPos(boxUp.getX1(), boxUp.getX2(),
-							boxUp.getY1() - 1, boxUp.getY2());
-					if(boxUp.overlaps(ce)){
-						ge.setY(ce.getY1() + ce.getHeight() + 1);
-						ge.setYVelocity(0);
-						if(Constants.yGravity <= 0){
-							yYes = false;
-						}
-						belowBlock = true;
-					}
-					// Left collision test
-					BoxImpl boxLeft = new BoxImpl(ge.getBox());
-					boxLeft.setPos(boxLeft.getX1() - 1, boxLeft.getX2(),
-							boxLeft.getY1(), boxLeft.getY2());
-					if(boxLeft.overlaps(ce)){
-						ge.setX(ce.getX1() + ce.getWidth() + 1);
-						ge.setXVelocity(0);
-						if(Constants.xGravity <= 0){
-							xYes = false;
-						}
-						rightOfBlock = true;
-					}
-					// Right collision test
-					BoxImpl boxRight = new BoxImpl(ge.getBox());
-					boxRight.setPos(boxRight.getX1(), boxRight.getX2() + 1,
-							boxRight.getY1(), boxRight.getY2());
-					if(boxRight.overlaps(ce)){
-						ge.setX(ce.getX1() - ge.getWidth() - 1);
-						ge.setXVelocity(0);
-						if(Constants.xGravity >= 0){
-							xYes = false;
-						}
-						leftOfBlock = true;
-					}
-					BoxImpl boxA;
-					if(!aboveBlock && !rightOfBlock){
-						boxA = new BoxImpl(ge.getBox());
-						boxA.setPos(boxA.getX1() - 1, boxA.getX2(),
-								boxA.getY1(), boxA.getY2() + 1);
-						if(boxA.overlaps(ce)){
-							if(-Constants.xGravity > Constants.yGravity){
-								ge.incrementX(-1);
-								ge.setYVelocity(0);
-								if(Constants.yGravity >= 0){
-									yYes = false;
-								}
-								blockCounter = 0;
-							}
-							else if(-Constants.xGravity < Constants.yGravity){
-								ge.incrementY(1);
-								ge.setXVelocity(0);
-								if(Constants.xGravity <= 0){
-									xYes = false;
-								}
-							}
-						}
-					}
-					if(!aboveBlock && !leftOfBlock){
-						boxA = new BoxImpl(ge.getBox());
-						boxA.setPos(boxA.getX1(), boxA.getX2() + 1,
-								boxA.getY1(), boxA.getY2() + 1);
-						if(boxA.overlaps(ce)){
-							if(Constants.xGravity > Constants.yGravity){
-								ge.incrementX(1);
-								ge.setYVelocity(0);
-								if(Constants.yGravity >= 0){
-									yYes = false;
-								}
-								blockCounter = 0;
-							}
-							else if(Constants.xGravity < Constants.yGravity){
-								ge.incrementY(1);
-								ge.setXVelocity(0);
-								if(Constants.xGravity >= 0){
-									xYes = false;
-								}
-							}
-						}
-					}
-					if(!belowBlock && !leftOfBlock){
-						boxA = new BoxImpl(ge.getBox());
-						boxA.setPos(boxA.getX1(), boxA.getX2() + 1,
-								boxA.getY1() - 1, boxA.getY2());
-						if(boxA.overlaps(ce)){
-							if(Constants.xGravity > -Constants.yGravity){
-								ge.incrementX(1);
-								ge.setYVelocity(0);
-								if(Constants.yGravity <= 0){
-									yYes = false;
-								}
-							}
-							else if(Constants.xGravity < -Constants.yGravity){
-								ge.incrementY(-1);
-								ge.setXVelocity(0);
-								if(Constants.xGravity >= 0){
-									xYes = false;
-								}
-							}
-						}
-					}
-					if(!belowBlock && !rightOfBlock){
-						boxA = new BoxImpl(ge.getBox());
-						boxA.setPos(boxA.getX1() - 1, boxA.getX2(),
-								boxA.getY1() - 1, boxA.getY2());
-						if(boxA.overlaps(ce)){
-							if(-Constants.xGravity > -Constants.yGravity){
-								ge.incrementX(-1);
-								ge.setYVelocity(0);
-								if(Constants.yGravity <= 0){
-									yYes = false;
-								}
-							}
-							else if(-Constants.xGravity < -Constants.yGravity){
-								ge.incrementY(-1);
-								ge.setXVelocity(0);
-								if(Constants.xGravity <= 0){
-									xYes = false;
-								}
-							}
-						}
-					}
+					Pair<Boolean, Boolean> pb =
+							updateGravity(Pair.make(xYes, yYes), ge, ce);
+					xYes = pb.getValueOne();
+					yYes = pb.getValueTwo();
 				}
 				else{
-					ge.setY(ce.getY1() - ge.getHeight() - 1);
-					ge.setYVelocity(0);
-					xYes = false;
-					yYes = false;
+					Pair<Boolean, Boolean> pb = collide(ge, ce);
+					xYes = pb.getValueOne();
+					yYes = pb.getValueTwo();
 				}
 			}
 			safeBoxes.put(ge, new BoxImpl(ge));
 			ge.updateGravity(xYes, yYes);
 		}
-
 	}
 
 	/*
@@ -637,11 +727,11 @@ public class GameEngine extends AbstractEngine{
 		}
 		if(player.getY1() - gameY > Main.getGameFrameHeight() +
 				player.getHeight()){
-			gameOver(gc);
+			gameOver(gc, false);
 		}
 	}
 
-	protected void gameOver(GameContainer gc){
+	protected void gameOver(GameContainer gc, boolean win){
 		if(Main.debug){
 			System.out.println("Game Over! Score: " + Helper.round(-gameY, 2));
 		}
@@ -652,6 +742,7 @@ public class GameEngine extends AbstractEngine{
 			addNameChar(c);
 		}
 		TSSingleContainerWindowMenu tsscwm = getParent().getWindowMenu();
+		getParent().getGameOverMenu().setMultiplayer(isMultiplayer(), win);
 		tsscwm.setComponent(getParent().getGameOverMenu());
 		tsscwm.setVisible(true);
 		addMenu(tsscwm);
@@ -929,55 +1020,74 @@ public class GameEngine extends AbstractEngine{
 		// Do nothing
 	}
 
+	protected void gameOverReset(){
+		getParent().updateHighScore();
+		getParent().updateStats();
+	}
+
+	protected void gameOverKeyCheck(int key, char c){
+		if(getParent().getWindowMenu().getComponent()
+				.equals(getParent().getGameOverMenu())){
+			if(key == Input.KEY_BACK || key == Input.KEY_DELETE){
+				if(name.length() > 0){
+					char hc = name.charAt(name.length() - 1);
+					name = name.substring(0, name.length() - 1);
+					hashNameChar(hc, false);
+				}
+			}
+			else if(key == Input.KEY_SPACE){
+				if(isMultiplayer()){
+					getParent().getWindowMenu().setVisible(false);
+					getParent().resetMP(false);
+				}
+				else{
+					paused = false;
+					gameOverReset();
+					getParent().getWindowMenu().setVisible(false);
+					reset();
+				}
+			}
+			else if(key == Input.KEY_ENTER){
+				if(isMultiplayer()){
+					getParent().getWindowMenu().setVisible(false);
+					getParent().resetMP(false);
+				}
+				else{
+					gameOverReset();
+					TSSingleContainerWindowMenu tsscwm = getParent()
+							.getWindowMenu();
+					tsscwm.setComponent(getParent().getHighScoreMenu());
+				}
+			}
+			else{
+				addNameChar(c);
+			}
+			return;
+		}
+		else if(getParent().getWindowMenu().getComponent()
+				.equals(getParent().getHighScoreMenu())){
+			if(key == Input.KEY_SPACE){
+				paused = true;
+				getParent().getWindowMenu().setVisible(false);
+				getParent().setForegroundEngine(getParent().getMenuEngine());
+				return;
+			}
+			else if(key == Input.KEY_ENTER){
+				paused = false;
+				getParent().getWindowMenu().setVisible(false);
+				reset();
+				return;
+			}
+		}
+	}
+
 	@Override
 	public void keyPressed(int key, char c){
 		if(key == Input.KEY_ESCAPE){
 			return;
 		}
 		if(gameOver){
-			if(getParent().getWindowMenu().getComponent()
-					.equals(getParent().getGameOverMenu())){
-				if(key == Input.KEY_BACK || key == Input.KEY_DELETE){
-					if(name.length() > 0){
-						char hc = name.charAt(name.length() - 1);
-						name = name.substring(0, name.length() - 1);
-						hashNameChar(hc, false);
-					}
-				}
-				else if(key == Input.KEY_SPACE){
-					paused = false;
-					getParent().updateHighScore();
-					getParent().updateStats();
-					getParent().getWindowMenu().setVisible(false);
-					reset();
-				}
-				else if(key == Input.KEY_ENTER){
-					getParent().updateHighScore();
-					getParent().updateStats();
-					TSSingleContainerWindowMenu tsscwm = getParent()
-							.getWindowMenu();
-					tsscwm.setComponent(getParent().getHighScoreMenu());
-				}
-				else{
-					addNameChar(c);
-				}
-				return;
-			}
-			else if(getParent().getWindowMenu().getComponent()
-					.equals(getParent().getHighScoreMenu())){
-				if(key == Input.KEY_SPACE){
-					paused = true;
-					getParent().getWindowMenu().setVisible(false);
-					getParent().setForegroundEngine(getParent().getMenuEngine());
-					return;
-				}
-				else if(key == Input.KEY_ENTER){
-					paused = false;
-					getParent().getWindowMenu().setVisible(false);
-					reset();
-					return;
-				}
-			}
+			gameOverKeyCheck(key, c);
 		}
 		else if(key == Input.KEY_SPACE || key == Input.KEY_ENTER){
 			if(hasInputFocus() && paused){
@@ -1056,12 +1166,11 @@ public class GameEngine extends AbstractEngine{
 		return getParent().getActiveEngines().contains(this);
 	}
 
-	public void pushNextRandom(int seed){
-		hasNextSeed = true;
-		nextSeed = seed;
-	}
-
 	public long getLastGameTime(){
 		return lastGameTime;
+	}
+
+	public boolean isMultiplayer(){
+		return false;
 	}
 }

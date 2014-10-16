@@ -42,7 +42,7 @@ public class TSFocusButton extends TSComponent{
 		/*
 		 * DEBUG System.out.println("mx: " + x); System.out.println("my: " + y);
 		 */
-		if(getMouseParent().hasInputFocus()){
+		if(getMouseParent() != null && getMouseParent().hasInputFocus()){
 			/*
 			 * DEBUG System.out.println("x: " + getRealLocation().getX1() + "; "
 			 * + getRealLocation().getX2()); System.out.println("y: " +
@@ -66,7 +66,18 @@ public class TSFocusButton extends TSComponent{
 		return parent;
 	}
 
-	public void setParent(TSMouseFocusable parent){
+	@Override
+	public void setParent(TSComponent parent){
+		super.setParent(parent);
+		if(parent instanceof TSMouseFocusable){
+			setFocusParent(parent);
+		}
+		else{
+			setFocusParent(null);
+		}
+	}
+
+	public void setFocusParent(TSMouseFocusable parent){
 		this.parent = parent;
 	}
 
