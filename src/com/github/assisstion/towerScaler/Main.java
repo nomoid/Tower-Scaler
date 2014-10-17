@@ -17,6 +17,10 @@ import com.github.assisstion.towerScaler.media.AudioHelper;
  *
  * Version History:
  *
+ * Pre-Alpha 0.3.0.1 (2014-10-16)
+ *   Added opponent block sprite
+ *   Added multiplayer block bumping
+ *
  * Pre-Alpha 0.3.0.0 (2014-10-15)
  *   Added multiplayer
  *   Added multiplayer processor
@@ -147,7 +151,7 @@ import com.github.assisstion.towerScaler.media.AudioHelper;
  *
  */
 
-@Version(value = "Pre-Alpha 0.3.0.0", lastUpdate = "2014-10-15")
+@Version(value = "Pre-Alpha 0.3.0.1", lastUpdate = "2014-10-16")
 public final class Main{
 
 	private Main(){

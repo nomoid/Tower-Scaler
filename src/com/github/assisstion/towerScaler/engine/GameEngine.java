@@ -272,6 +272,7 @@ public class GameEngine extends AbstractEngine{
 	@Override
 	public void render(GameContainer gc, Graphics g){
 		g.setBackground(new Color(150, 150, 255));
+		beginRender(gc, g);
 		/*
 		 * UNUSED Random background mode g.setBackground(new
 		 * Color((int)(Math.random() * 255), (int)(Math.random() * 255),
@@ -279,6 +280,15 @@ public class GameEngine extends AbstractEngine{
 		 */
 		drawEntities(gc, g);
 		drawOverlay(gc, g);
+		endRender(gc, g);
+	}
+
+	protected void beginRender(GameContainer gc, Graphics g){
+
+	}
+
+	protected void endRender(GameContainer gc, Graphics g){
+
 	}
 
 	protected void beginUpdate(){
@@ -461,7 +471,7 @@ public class GameEngine extends AbstractEngine{
 				yYes = false;
 			}
 			aboveBlock = true;
-			blockCounter = 0;
+			yYes = aboveBlockCheck(yYes, ge, ce);
 		}
 		// Up collision test
 		BoxImpl boxUp = new BoxImpl(ge.getBox());
@@ -474,6 +484,7 @@ public class GameEngine extends AbstractEngine{
 				yYes = false;
 			}
 			belowBlock = true;
+			yYes = belowBlockCheck(yYes, ge, ce);
 		}
 		// Left collision test
 		BoxImpl boxLeft = new BoxImpl(ge.getBox());
@@ -486,6 +497,7 @@ public class GameEngine extends AbstractEngine{
 				xYes = false;
 			}
 			rightOfBlock = true;
+			xYes = rightOfBlockCheck(xYes, ge, ce);
 		}
 		// Right collision test
 		BoxImpl boxRight = new BoxImpl(ge.getBox());
@@ -498,6 +510,7 @@ public class GameEngine extends AbstractEngine{
 				xYes = false;
 			}
 			leftOfBlock = true;
+			xYes = leftOfBlockCheck(xYes, ge, ce);
 		}
 		BoxImpl boxA;
 		if(!aboveBlock && !rightOfBlock){
@@ -589,6 +602,23 @@ public class GameEngine extends AbstractEngine{
 		return Pair.make(xYes, yYes);
 	}
 
+	protected boolean leftOfBlockCheck(boolean xYes, GravitationalEntity ge, CollisionEntity ce){
+		return xYes;
+	}
+
+	protected boolean rightOfBlockCheck(boolean xYes, GravitationalEntity ge, CollisionEntity ce){
+		return xYes;
+	}
+
+	protected boolean belowBlockCheck(boolean yYes, GravitationalEntity ge, CollisionEntity ce){
+		return yYes;
+	}
+
+	protected boolean aboveBlockCheck(boolean yYes, GravitationalEntity ge, CollisionEntity ce){
+		blockCounter = 0;
+		return yYes;
+	}
+
 	protected Pair<Boolean, Boolean> collide(GravitationalEntity ge, CollisionEntity ce){
 		ge.setY(ce.getY1() - ge.getHeight() - 1);
 		ge.setYVelocity(0);
@@ -668,16 +698,7 @@ public class GameEngine extends AbstractEngine{
 		}
 		if(input.isKeyPressed(Input.KEY_UP) || input.isKeyPressed(Input.KEY_W)){
 			if(!noClip){
-				if(jumpCounter > 0){
-					jumpCounter--;
-					if(aboveBlock){
-						player.setYVelocity(-Constants.jump);
-					}
-					// Midair Jumping
-					else{
-						player.setYVelocity(-Constants.jumpMidair);
-					}
-				}
+				jump();
 			}
 		}
 		if(input.isKeyDown(Input.KEY_DOWN) || input.isKeyDown(Input.KEY_S)){
@@ -717,6 +738,19 @@ public class GameEngine extends AbstractEngine{
 		if(!noClip){
 			player.incrementX(0.3 * player.getXVelocity() * delta);
 			player.incrementY(0.3 * player.getYVelocity() * delta);
+		}
+	}
+
+	protected void jump(){
+		if(jumpCounter > 0){
+			jumpCounter--;
+			if(aboveBlock){
+				player.setYVelocity(-Constants.jump);
+			}
+			// Midair Jumping
+			else{
+				player.setYVelocity(-Constants.jumpMidair);
+			}
 		}
 	}
 

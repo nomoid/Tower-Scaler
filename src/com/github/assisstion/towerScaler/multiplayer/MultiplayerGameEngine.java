@@ -6,9 +6,13 @@ import java.util.Map;
 import java.util.Random;
 
 import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Input;
 
 import com.github.assisstion.towerScaler.engine.GameEngine;
 import com.github.assisstion.towerScaler.engine.MainEngine;
+import com.github.assisstion.towerScaler.entity.CollisionEntity;
+import com.github.assisstion.towerScaler.entity.GravitationalEntity;
 import com.github.assisstion.towerScaler.entity.Opponent;
 import com.github.assisstion.towerScaler.entity.Player;
 
@@ -22,6 +26,9 @@ public class MultiplayerGameEngine extends GameEngine{
 	protected int nextSeed = metaRandom.nextInt();
 	protected Object seedWaiter = new Object();
 	protected boolean hasSeed = false;
+	protected boolean belowOpponent = false;
+	protected boolean toJump = false;
+	protected double preVel = 0;
 
 	@Override
 	public void initRandom(){
@@ -30,7 +37,7 @@ public class MultiplayerGameEngine extends GameEngine{
 
 	@Override
 	public void endInit(GameContainer gc){
-		opponent = new Opponent(player.getX1(), player.getX2(), playerTexture());
+		opponent = new Opponent(player.getX1(), player.getX2(), "OpponentBlock.png");
 		entities.add(opponent);
 		collisionObjects.add(opponent);
 		allowCheats = false;
@@ -55,6 +62,15 @@ public class MultiplayerGameEngine extends GameEngine{
 			}
 		}
 		super.gameOver(gc, calledByOthers);
+	}
+
+	@Override
+	protected void endRender(GameContainer gc, Graphics g){
+		/*
+		g.drawString(
+				"a: " + belowOpponent,
+				10, 70);
+		 */
 	}
 
 	@Override
@@ -98,6 +114,49 @@ public class MultiplayerGameEngine extends GameEngine{
 		addBlock(blockLocation, 150, 400);
 		addBlock(blockLocation, 200, 500);
 		addBlock(blockLocation, 150, 600);
+	}
+
+	@Override
+	protected void preCollisionCheck(){
+		preVel = player.getYVelocity();
+		belowOpponent = false;
+		super.preCollisionCheck();
+	}
+
+	@Override
+	protected boolean belowBlockCheck(boolean yYes, GravitationalEntity ge, CollisionEntity ce){
+		if(ce instanceof Opponent){
+			belowOpponent = true;
+			if(preVel > 0){
+				player.setYVelocity(preVel);
+				return true;
+			}
+		}
+		return yYes;
+	}
+
+	@Override
+	protected void jump(){
+		if(belowOpponent){
+			Command cmd = Commands.make("bump");
+			try{
+				processor.output(cmd, false);
+			}
+			catch(IOException e){
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		super.jump();
+	}
+
+	@Override
+	protected void inputCheck(Input input, int delta){
+		if(toJump){
+			jump();
+			toJump = false;
+		}
+		super.inputCheck(input, delta);
 	}
 
 	public MultiplayerGameEngine(MainEngine parent){
@@ -204,6 +263,9 @@ public class MultiplayerGameEngine extends GameEngine{
 			paused = true;
 			getParent().setForegroundEngine(getParent().getMenuEngine());
 		}
+		else if(name.equalsIgnoreCase("bump")){
+			toJump = true;
+		}
 		else{
 			System.out.println("Unknown command: " + name);
 		}
@@ -218,9 +280,9 @@ public class MultiplayerGameEngine extends GameEngine{
 		Map<String, String> map = new HashMap<String, String>();
 		nextSeed = metaRandom.nextInt();
 		map.put("seed", String.valueOf(nextSeed));
-		Command gameOver = Commands.make("resetMP", map);
+		Command cmd = Commands.make("resetMP", map);
 		try{
-			processor.output(gameOver, false);
+			processor.output(cmd, false);
 		}
 		catch(IOException e){
 			// TODO Auto-generated catch block
@@ -231,9 +293,9 @@ public class MultiplayerGameEngine extends GameEngine{
 	public void disconnect(){
 		if(processor != null){
 			try{
-				Command gameOver = Commands.make("disconnect");
+				Command cmd = Commands.make("disconnect");
 				try{
-					processor.output(gameOver, false);
+					processor.output(cmd, false);
 				}
 				catch(IOException e){
 					// TODO Auto-generated catch block
