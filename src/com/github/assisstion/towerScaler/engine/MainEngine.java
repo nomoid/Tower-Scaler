@@ -208,7 +208,11 @@ public class MainEngine extends BasicGame implements Engine{
 					server.open();
 					mpm.serverWindow(server);
 				}
-				catch(NumberFormatException | IOException e){
+				catch(NumberFormatException e){
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				catch(IOException e){
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -233,7 +237,11 @@ public class MainEngine extends BasicGame implements Engine{
 					mp.start(false);
 					mge.addProcessor(mp);
 				}
-				catch(NumberFormatException | IOException e){
+				catch(NumberFormatException e){
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				catch(IOException e){
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}

@@ -17,6 +17,10 @@ import com.github.assisstion.towerScaler.media.AudioHelper;
  *
  * Version History:
  *
+ * Pre-Alpha 0.3.0.2 (2014-10-16)
+ *   Changed compile compatibility from 1.8 to 1.6
+ *   Optional dependency update to SocketRelay API 1.1.4b
+ *
  * Pre-Alpha 0.3.0.1 (2014-10-16)
  *   Added opponent block sprite
  *   Added multiplayer block bumping
@@ -151,7 +155,7 @@ import com.github.assisstion.towerScaler.media.AudioHelper;
  *
  */
 
-@Version(value = "Pre-Alpha 0.3.0.1", lastUpdate = "2014-10-16")
+@Version(value = "Pre-Alpha 0.3.0.2", lastUpdate = "2014-10-16")
 public final class Main{
 
 	private Main(){
